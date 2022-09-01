@@ -1,7 +1,15 @@
 import React, {Suspense, lazy} from 'react'
 import {Redirect, Route, Switch} from 'react-router-dom'
 import {FallbackView} from '../../_metronic/partials'
-import {DashboardWrapper} from '../pages/dashboard/DashboardWrapper'
+import { HomeForm } from '../pages/home/HomeForm'
+import { AboutForm } from '../pages/about/AboutForm'
+import { ArchitectureForm } from '../pages/architecture/ArchitectureForm'
+import { PropertyForm } from '../pages/stay/PropertyForm'
+import { ExperienceForm } from '../pages/experience/ExperienceForm'
+import { WorkshopForm } from '../pages/workshop/WorkshopForm'
+import { LibraryForm } from '../pages/library/LibraryForm'
+import { PressForm } from '../pages/press/PressForm'
+// import {DashboardWrapper} from '../pages/dashboard/DashboardWrapper'
 import {MenuTestPage} from '../pages/MenuTestPage'
 
 export function PrivateRoutes() {
@@ -15,7 +23,15 @@ export function PrivateRoutes() {
   return (
     <Suspense fallback={<FallbackView />}>
       <Switch>
-        <Route path='/dashboard' component={DashboardWrapper} />
+        <Route path='/home' component={HomeForm} />
+        <Route path='/about' component={AboutForm} />
+        <Route path='/architecture' component={ArchitectureForm} />
+        <Route path='/property' component={PropertyForm} />
+        <Route path='/experience' component={ExperienceForm} />
+        <Route path='/workshop' component={WorkshopForm} />
+        <Route path='/library' component={LibraryForm} />
+        <Route path='/press' component={PressForm} />
+        {/* <Route path='/dashboard' component={DashboardWrapper} /> */}
         <Route path='/builder' component={BuilderPageWrapper} />
         <Route path='/crafted/pages/profile' component={ProfilePage} />
         <Route path='/crafted/pages/wizards' component={WizardsPage} />
@@ -23,8 +39,10 @@ export function PrivateRoutes() {
         <Route path='/crafted/account' component={AccountPage} />
         <Route path='/apps/chat' component={ChatPage} />
         <Route path='/menu-test' component={MenuTestPage} />
-        <Redirect from='/auth' to='/dashboard' />
-        <Redirect exact from='/' to='/dashboard' />
+        <Redirect from='/auth' to='/home' />
+        <Redirect exact from='/' to='/home' />
+        {/* <Redirect from='/auth' to='/dashboard' />
+        <Redirect exact from='/' to='/dashboard' /> */}
         <Redirect to='error/404' />
       </Switch>
     </Suspense>
