@@ -51,7 +51,7 @@ const Slider: FC<Props> = ({ imageFunc, withForm, sliderNum }) => {
     return (
         <>
             <form className='row my-5' onSubmit={handleSliderSubmit}>
-                <label htmlFor={`sliderImage${sliderNum}`} className="form-label col-6">
+                <label htmlFor={`sliderImage${sliderNum}`} className="form-label col-md-6">
                     <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                         {createObjectURL === "" ?
                             <>
@@ -64,7 +64,7 @@ const Slider: FC<Props> = ({ imageFunc, withForm, sliderNum }) => {
                     </div>
                 </label>
                 <input hidden required type="file" className="form-control my-3" id={`sliderImage${sliderNum}`} name={`sliderImage${sliderNum}`} onChange={handleImage} accept=".png, .jpg, .jpeg" />
-                <div className='col-6 d-flex flex-column justify-content-between'>
+                <div className='col-md-6 d-flex flex-column justify-content-between'>
                     <div className='d-flex flex-row flex-wrap justify-content-start'>
                         {createObjectURLArray.map((val, index) =>
                             <img style={{ width: "80px", height: "50px", display: 'block' }} src={val} key={index} alt="upload_Image" />

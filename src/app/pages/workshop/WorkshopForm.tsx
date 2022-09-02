@@ -68,7 +68,7 @@ const WorkshopForm: FC = () => {
                 <Tab eventKey="FormTab" title="Form">
                     <h1>Workshop Course Table Data</h1>
                     <form onSubmit={handleSubmit} className="row g-5 mt-5">
-                        <div className="col-6 mb-5">
+                        <div className="col-md-6 mb-5">
                             <label htmlFor='workshopImage' className="form-label w-100">
                                 <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                                     {createObjectURL === "" ?
@@ -83,7 +83,7 @@ const WorkshopForm: FC = () => {
                             </label>
                             <input hidden required type="file" className="form-control" id="workshopImage" name="workshopImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
                         </div>
-                        <div className='col-6'>
+                        <div className='col-md-6'>
                             <div className="mb-5">
                                 <select onChange={handleSelect} className="form-select required" aria-label="Default select example" required>
                                     <option value="">Select Course Type</option>

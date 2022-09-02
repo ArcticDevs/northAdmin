@@ -78,7 +78,7 @@ const AboutForm: FC = () => {
                     </div>
                     <h1>Teams Data</h1>
                     <form className='row g-5' onSubmit={handleSubmit}>
-                        <div className="col-6">
+                        <div className="col-md-6">
                             <label htmlFor='teamImage' className="form-label" style={{ width: '100%' }}>
                                 <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                                     {createObjectURL === "" ?
@@ -93,7 +93,7 @@ const AboutForm: FC = () => {
                             </label>
                             <input hidden required type="file" className="form-control" id="teamImage" name="teamImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
                         </div>
-                        <div className='col-6'>
+                        <div className='col-md-6'>
                             <div className="mb-5">
                                 <input required className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} />
                                 <label className="form-check-label mx-3 required">

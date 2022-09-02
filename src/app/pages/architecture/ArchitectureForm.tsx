@@ -82,10 +82,10 @@ const ArchitectureForm: FC = () => {
                 <Tab eventKey="FormTab" title="Form">
                     <h1>Research Publications</h1>
                     <form onSubmit={handleSubmitResearch} className='row mb-10'>
-                        <div className="col-6 my-5">
+                        <div className="col-md-6 my-5">
                             <ImageArray imageFunc={handleImageFunc} />
                         </div>
-                        <div className="col-6 my-5">
+                        <div className="col-md-6 my-5">
                             <div className="mb-5">
                                 <label className="form-label required">Title</label>
                                 <input required type="text" className="form-control" id="title" name='title' value={title} onChange={handleFormDataResearchChange} />
@@ -108,7 +108,7 @@ const ArchitectureForm: FC = () => {
                     <div className='my-10'>
                         <h1>Projects Data</h1>
                         <form onSubmit={handleSubmitProject} className="row">
-                            <label htmlFor='projectImage' className="form-label col-6">
+                            <label htmlFor='projectImage' className="form-label col-md-6">
                                 <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                                     {createObjectURL === "" ?
                                         <>
@@ -122,7 +122,7 @@ const ArchitectureForm: FC = () => {
                             </label>
                             {/* <label className="form-label required">Project Image</label> */}
                             <input hidden required type="file" className="form-control" id="projectImage" name="projectImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
-                            <div className="col-6">
+                            <div className="col-md-6">
                                 <div className="mb-5">
                                     <label className="form-label required">Title</label>
                                     <input required type="text" className="form-control" id="projectTitle" name='projectTitle' value={projectTitle} onChange={handleFormDataProjectChange} />

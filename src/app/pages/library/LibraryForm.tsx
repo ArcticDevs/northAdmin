@@ -65,7 +65,7 @@ const LibraryForm: FC = () => {
                 <Tab eventKey="FormTab" title="Form">
                     <h1>Books Data</h1>
                     <form onSubmit={handleSubmit} className='row'>
-                        <div className="col-6">
+                        <div className="col-md-6">
                             <label htmlFor='bookImage' className="form-label w-100">
                                 <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                                     {createObjectURL === "" ?
@@ -80,7 +80,7 @@ const LibraryForm: FC = () => {
                             </label>
                             <input hidden required type="file" className="form-control" id="bookImage" name="bookImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
                         </div>
-                        <div className="col-6">
+                        <div className="col-md-6">
                             <div className="mb-5">
                                 <label className="form-label required">Book Title</label>
                                 <input required type="text" className="form-control" id="title" name='title' value={title} onChange={handleFormDataChange} />
