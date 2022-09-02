@@ -39,6 +39,7 @@ export function PrivateRoutes() {
         <Route path='/crafted/account' component={AccountPage} />
         <Route path='/apps/chat' component={ChatPage} />
         <Route path='/menu-test' component={MenuTestPage} />
+        <Redirect from='/auth/login' to='/home' />
         <Redirect from='/auth' to='/home' />
         <Redirect exact from='/' to='/home' />
         {/* <Redirect from='/auth' to='/dashboard' />
