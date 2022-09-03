@@ -87,7 +87,7 @@ export function Registration() {
           icon: 'success',
           confirmButtonText: 'Close',
           timer: 2000,
-        }).then(() => history.push('/dashboard'))
+        })
       } else {
         setLoading(false)
 

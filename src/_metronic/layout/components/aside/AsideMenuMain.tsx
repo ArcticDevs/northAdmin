@@ -10,6 +10,12 @@ export function AsideMenuMain() {
 
   return (
     <>
+    {/* <AsideMenuItem
+        to='/test'
+        icon='/media/icons/duotune/general/gen001.svg'
+        title='Test Page'
+        fontIcon='bi-layers'
+      /> */}
       <AsideMenuItem
         to='/home'
         icon='/media/icons/duotune/general/gen001.svg'

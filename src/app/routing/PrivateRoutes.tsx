@@ -11,6 +11,7 @@ import { LibraryForm } from '../pages/library/LibraryForm'
 import { PressForm } from '../pages/press/PressForm'
 // import {DashboardWrapper} from '../pages/dashboard/DashboardWrapper'
 import {MenuTestPage} from '../pages/MenuTestPage'
+import Test from '../pages/test'
 
 export function PrivateRoutes() {
   const BuilderPageWrapper = lazy(() => import('../pages/layout-builder/BuilderPageWrapper'))
@@ -23,6 +24,7 @@ export function PrivateRoutes() {
   return (
     <Suspense fallback={<FallbackView />}>
       <Switch>
+      {/* <Route path='/test' component={Test} /> */}
         <Route path='/home' component={HomeForm} />
         <Route path='/about' component={AboutForm} />
         <Route path='/architecture' component={ArchitectureForm} />
