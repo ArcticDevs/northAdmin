@@ -83,6 +83,7 @@ export function Login() {
           timer: 2000,
         }).then(() => {
           window.location.reload()
+          history.push('/home')
         })
       } else {
         setLoading(false)

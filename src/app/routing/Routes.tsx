@@ -26,6 +26,7 @@ const Routes: FC = () => {
   useEffect(() => {
     if (localStorage.getItem('userDetails')) {
       setIsAuthorized(true)
+      history.push('/home')
     } else {
       setIsAuthorized(false)
       history.push('/auth/login')
