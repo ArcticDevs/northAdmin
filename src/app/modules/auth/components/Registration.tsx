@@ -76,10 +76,18 @@ export function Registration() {
 
       const res = await registerUser(email, username, password)
 
-      if (res && res.status === 201) {
-        setLoading(false)
+      if (res && res.status === 201 && res.data.message === "User already exists, please try logging in") {
+        setLoading(false)   
 
-        localStorage.setItem('userDetails', JSON.stringify(res.data.user))
+        Swal.fire({
+          title: `${res.data.message}`,
+          icon: 'info',
+          confirmButtonText: 'Close'
+        }).then(() => history.push('/auth/login'))
+
+      } else {
+        setLoading(false)
+        localStorage.setItem('userDetails', JSON.stringify(res?.data.user))
 
         Swal.fire({
           title: `Welcome! ${username}`,
@@ -88,18 +96,10 @@ export function Registration() {
           confirmButtonText: 'Close',
           timer: 2000,
         })
-      } else {
-        setLoading(false)
-
-        Swal.fire({
-          title: 'An error occured , Please try again',
-          icon: 'error',
-          confirmButtonText: 'Close',
-          timer: 2000,
-        })
       }
     } catch (error) {
-      setLoading(false)
+      console.log(error)
+      setLoading(false)      
 
       Swal.fire({
         title: 'An error occured , Please try again',
