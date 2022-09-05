@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const apiURL = 'http://localhost:4001'
-// const apiURL = 'https://north-backend5.herokuapp.com'
+// const apiURL = 'http://localhost:4001'
+const apiURL = 'https://north-backend5.herokuapp.com'
 
 export const registerUser = async (email, username, password) => {
   try {
