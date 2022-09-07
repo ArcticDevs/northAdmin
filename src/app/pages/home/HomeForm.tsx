@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState, FC } from 'react'
+import { useState, useEffect, FC } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
+import { postTestimonial, getHomeTestimonials, deleteTestimonial } from '../../ApiCalls/TestimonialApiCalls';
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 
@@ -30,8 +31,24 @@ const HomeForm: FC = () => {
     const handleSubmit = (e: any) => {
         e.preventDefault();
         console.log(formData)
+        postTestimonial(formData)
         setFormData(initialState)
     };
+
+    const [testimonialData, setTestimonialData] = useState<any>([]);
+
+    useEffect(() => {
+        const getData = async () => {
+            const data = await getHomeTestimonials() || [];
+            setTestimonialData(data);
+        }
+        getData();
+    }, [testimonialData])
+
+    const handleDelete = async (id: any) => {
+        const del = await deleteTestimonial(id)
+        setTestimonialData(testimonialData.filter((val: any) => val.id !== id));
+    }
 
     return (
         <>
@@ -83,24 +100,18 @@ const HomeForm: FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className='fs-5 border-bottom border-gray-500'>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
+                                {testimonialData.length === 0 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
+                                    testimonialData.map((val: any, index: number) =>
+                                        <tr className='fs-5 border-bottom border-gray-500' key={index}>
+                                            <td>{index + 1}</td>
+                                            <td>{val.name}</td>
+                                            <td>{val.content}</td>
+                                            <td>{val.designation}</td>
+                                            <td>
+                                                <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val.id)}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    )}
                             </tbody>
                         </table>
                     </div>
