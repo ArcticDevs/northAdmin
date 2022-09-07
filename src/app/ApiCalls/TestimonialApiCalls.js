@@ -6,12 +6,13 @@ export const postTestimonial = async (category, name, content, designation) => {
     const authId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(authId)
     try {
-        return axios.post(`${homeApiURL}/add/${authId}`, {
+        const response = axios.post(`${homeApiURL}/add/${authId}`, {
             category,
             name,
             content,
             designation
         })
+        return response.data;
     } catch (error) {
         console.error(error)
     }
@@ -20,7 +21,8 @@ export const postTestimonial = async (category, name, content, designation) => {
 
 export const getHomeTestimonials = async () => {
     try {
-        return axios.get(`${homeApiURL}/all/`)
+        const response = axios.get(`${homeApiURL}/all/`);
+        return response.data;
     } catch (error) {
         console.error(error)
     }

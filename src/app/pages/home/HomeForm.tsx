@@ -102,13 +102,13 @@ const HomeForm: FC = () => {
                             <tbody>
                                 {testimonialData.length === 0 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
                                     testimonialData.map((val: any, index: number) =>
-                                        <tr className='fs-5 border-bottom border-gray-500' key={index}>
+                                        <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>
                                             <td>{val.name}</td>
                                             <td>{val.content}</td>
                                             <td>{val.designation}</td>
                                             <td>
-                                                <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val.id)}>Delete</button>
+                                                <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val._id)}>Delete</button>
                                             </td>
                                         </tr>
                                     )}
