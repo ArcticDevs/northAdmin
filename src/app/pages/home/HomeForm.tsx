@@ -39,11 +39,11 @@ const HomeForm: FC = () => {
 
     useEffect(() => {
         const getData = async () => {
-            const data = await getHomeTestimonials() || [];
+            const data = await getHomeTestimonials();
             setTestimonialData(data);
         }
         getData();
-    }, [testimonialData])
+    }, [])
 
     const handleDelete = async (id: any) => {
         const del = await deleteTestimonial(id)
@@ -100,7 +100,7 @@ const HomeForm: FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {testimonialData.length === 0 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
+                                {testimonialData && testimonialData.length<1 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
                                     testimonialData.map((val: any, index: number) =>
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>

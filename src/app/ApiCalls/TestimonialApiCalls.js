@@ -7,7 +7,7 @@ export const postTestimonial = async (category, name, content, designation) => {
     const authId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(authId)
     try {
-        const response = axios.post(`${homeApiURL}/add/${authId}`, {
+        const response = await axios.post(`${homeApiURL}/add/${authId}`, {
             category,
             name,
             content,
@@ -22,8 +22,9 @@ export const postTestimonial = async (category, name, content, designation) => {
 
 export const getHomeTestimonials = async () => {
     try {
-        const response = axios.get(`${homeApiURL}/all/`);
-        return response.data;
+        const response = await axios.get(`${homeApiURL}/all`);
+        console.log(response)
+        return response.data.data;
     } catch (error) {
         console.error(error)
     }
@@ -31,7 +32,7 @@ export const getHomeTestimonials = async () => {
 
 export const deleteTestimonial = async (testimonialId) => {
     try {
-        return axios.delete(`${homeApiURL}/delete/${testimonialId}`)
+        return await axios.delete(`${homeApiURL}/delete/${testimonialId}`)
     } catch (error) {
         console.error(error)
     }
