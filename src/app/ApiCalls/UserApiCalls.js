@@ -1,11 +1,9 @@
 import axios from 'axios'
-
-// const apiURL = 'http://localhost:4001'
-const apiURL = 'https://north-backend5.herokuapp.com'
+import {url} from './ApiUrl'
 
 export const registerUser = async (email, username, password) => {
   try {
-    return axios.post(`${apiURL}/api/user/register`, {
+    return axios.post(`${url}/user/register`, {
       email,
       username,
       password,
@@ -17,7 +15,7 @@ export const registerUser = async (email, username, password) => {
 
 export const loginUser = async (email,password) => {
   try {
-    return axios.post(`${apiURL}/api/user/login`, {
+    return axios.post(`${url}/user/login`, {
       email,
       password,
     })

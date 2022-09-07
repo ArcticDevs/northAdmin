@@ -1,6 +1,7 @@
 import axios from "axios";
+import {url} from './ApiUrl'
 
-const homeApiURL = 'http://localhost:4001/api/data/homepage/testimonials'
+const homeApiURL = `${url}/data/homepage/testimonials`
 
 export const postTestimonial = async (category, name, content, designation) => {
     const authId = JSON.parse(localStorage.getItem("userDetails"))._id;
