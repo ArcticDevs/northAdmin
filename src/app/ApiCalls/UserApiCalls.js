@@ -10,6 +10,7 @@ export const registerUser = async (email, username, password) => {
     })
   } catch (error) {
     console.error(error)
+    return error
   }
 }
 

@@ -193,7 +193,7 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
             )}
           </div>
           <div className='d-flex flex-column align-self-end'>
-            <button type="button" onClick={handleUpload} className="btn btn-secondary mb-5">Add image to Slider</button>
+            <button type="button" className="btn btn-secondary mb-5" onClick={handleUpload}>Add image to Slider</button>
             <button type="submit" className="btn btn-primary" style={{ display: "block" }} disabled={uploadLoading}>Submit</button>
           </div>
         </div>
