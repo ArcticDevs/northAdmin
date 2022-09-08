@@ -71,42 +71,49 @@ export function Registration() {
   let history = useHistory()
 
   const handleRegister = async () => {
-    try {
-      setLoading(true)
+    if (username === '' || password === '' || email === '' || cpassword === '') {
+      Swal.fire({
+        title: `Please fill all the fields`,
+        icon: 'info',
+        confirmButtonText: 'Close',
+      })
+    } else {
+      try {
+        setLoading(true)
 
-      const res = await registerUser(email, username, password)
+        const res = await registerUser(email, username, password)
 
-      if (res?.status === 200) {
-        setLoading(false)   
+        if (res?.status === 200) {
+          setLoading(false)
 
-        Swal.fire({
-          title: `${res?.data.message}`,
-          icon: 'info',
-          confirmButtonText: 'Close'
-        }).then(() => history.push('/auth/login'))
+          Swal.fire({
+            title: `${res?.data.message}`,
+            icon: 'info',
+            confirmButtonText: 'Close',
+          }).then(() => history.push('/auth/login'))
+        } else {
+          setLoading(false)
+          localStorage.setItem('userDetails', JSON.stringify(res?.data.user))
 
-      } else {
+          Swal.fire({
+            title: `Welcome! ${username}`,
+            text: 'User Registered Succesfully',
+            icon: 'success',
+            confirmButtonText: 'Close',
+            timer: 2000,
+          })
+        }
+      } catch (error) {
+        console.log(error)
         setLoading(false)
-        localStorage.setItem('userDetails', JSON.stringify(res?.data.user))
 
         Swal.fire({
-          title: `Welcome! ${username}`,
-          text: 'User Registered Succesfully',
-          icon: 'success',
+          title: 'An error occured , Please try again',
+          icon: 'error',
           confirmButtonText: 'Close',
           timer: 2000,
         })
       }
-    } catch (error) {
-      console.log(error)
-      setLoading(false)      
-
-      Swal.fire({
-        title: 'An error occured , Please try again',
-        icon: 'error',
-        confirmButtonText: 'Close',
-        timer: 2000,
-      })
     }
   }
 
