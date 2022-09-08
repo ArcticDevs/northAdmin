@@ -6,12 +6,17 @@ import Slider from '../Slider'
 import { KTSVG } from "../../../_metronic/helpers"
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
-import { getImages } from '../../ApiCalls/SliderApiCalls'
+import { getImages, deleteImages } from '../../ApiCalls/SliderApiCalls';
+import { postTeamsData, getTeamsData, deleteTeamData } from '../../ApiCalls/AboutTeamsDataApiCalls'
+import Swal from 'sweetalert2'
 
 const AboutForm = () => {
     const intl = useIntl()
 
-    const [sliderArray, setSliderArray] = useState([]);
+    const [sliderArray_1, setSliderArray_1] = useState([]);
+    const [sliderArray_2, setSliderArray_2] = useState([]);
+    const [deleteId, setDeleteId] = useState()
+
     const [image, setImage] = useState("");
     const [createObjectURL, setCreateObjectURL] = useState("");
 
@@ -50,18 +55,48 @@ const AboutForm = () => {
         e.preventDefault();
         formData.defaultTeamImage = checkboxValue;
         console.log(formData)
+        postTeamsData(formData);
         setFormData(initialState)
     };
 
     useEffect(() => {
         const getSliderImages = async () => {
-            const data = await getImages();
-            setSliderArray(data[data.length - 1].sliderImages);
+            const data = await getImages("abovevision");
+            if (data)
+                setSliderArray_1(data[data.length - 1].sliderImages);
         }
         getSliderImages();
-    }, [])
+    }, [deleteId])
 
-    console.log(sliderArray)
+    useEffect(() => {
+        const getSliderImages = async () => {
+            const data = await getImages("aboveRecog");
+            if (data)
+                setSliderArray_2(data[data.length - 1].sliderImages);
+        }
+        getSliderImages();
+    }, [deleteId])
+
+
+    const handleDelete = async (id) => {
+        const del = await deleteImages(id)
+        if (del) {
+            Swal.fire({
+                title: 'Testimonial Deleted Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setDeleteId(id);
+        }
+        else {
+            Swal.fire({
+                title: 'Error Occured , please try again',
+                icon: 'error',
+                confirmButtonText: 'Close',
+            })
+        }
+    }
+
     return (
         <>
             <PageTitle breadcrumbs={[]}>{intl.formatMessage({ id: 'MENU.DASHBOARD' })}</PageTitle>
@@ -74,11 +109,11 @@ const AboutForm = () => {
                 <Tab eventKey="FormTab" title="Form">
                     <div className='mb-10'>
                         <h1>Slider 1 (Above Vision Section)</h1>
-                        <Slider pageValue='about' sliderNum={1} withForm={false} />
+                        <Slider pageValue='aboutpage' sliderNum={"aboutvision"} withForm={false} />
                     </div>
                     <div className='mb-10'>
                         <h1>Slider 2 (After Recognitions Table)</h1>
-                        <Slider pageValue='about' sliderNum={2} withForm={false} />
+                        <Slider pageValue='aboutpage' sliderNum={"aboutrecog"} withForm={false} />
                     </div>
                     <h1>Teams Data</h1>
                     <form className='row g-5' onSubmit={handleSubmit}>
@@ -132,23 +167,28 @@ const AboutForm = () => {
                 <Tab eventKey="TableTab" title="View Data">
                     <h1>Slider 1 (Above Vision Section)</h1>
                     <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'>
-                        {sliderArray && sliderArray.length < 1 ? <h3>No Data</h3> :
-                            sliderArray.map((val, index) =>
-                                <div>
-                                    <img style={{ width: "80px", height: "50px", display: 'block' }} src={`https://drive.google.com/uc?export=view&id=${val.url.substring(32, 65)}`} key={index} alt="upload_Image" />
-                                    <div>
-                                        <button className='btn btn-icon btn-danger p-0'><i className='bi bi-trash-fill'></i></button>
+                        {sliderArray_1 && sliderArray_1.length < 1 ? <h3>No Data</h3> :
+                            sliderArray_1.map((val, index) =>
+                                <div key={val.id}>
+                                    <img style={{ width: "80px", height: "50px", display: 'block' }} src={`https://drive.google.com/uc?export=view&id=${val.url.substring(32, 65)}`} alt="upload_Image" />
+                                    <div className='my-5'>
+                                        <button className='btn btn-icon btn-sm btn-danger p-0' onClick={() => handleDelete(val.id)}><i className='bi bi-trash-fill'></i></button>
                                     </div>
                                 </div>
                             )
                         }
                     </div>
                     <h1>Slider 2 (After Recognitions Table)</h1>
-                    {/* <div className='d-flex flex-row flex-wrap justify-content-start'>
-                        {createObjectURLArray.map((val, index) =>
-                            <img style={{ width: "80px", height: "50px", display: 'block' }} src={val} key={index} alt="upload_Image" />
-                        )}
-                    </div> */}
+                    {sliderArray_2 && sliderArray_2.length < 1 ? <h3>No Data</h3> :
+                        sliderArray_2.map((val, index) =>
+                            <div key={val.id}>
+                                <img style={{ width: "80px", height: "50px", display: 'block' }} src={`https://drive.google.com/uc?export=view&id=${val.url.substring(32, 65)}`} alt="upload_Image" />
+                                <div className='my-5'>
+                                    <button className='btn btn-icon btn-sm btn-danger p-0' onClick={() => handleDelete(val.id)}><i className='bi bi-trash-fill'></i></button>
+                                </div>
+                            </div>
+                        )
+                    }
                     <h1>Teams Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">

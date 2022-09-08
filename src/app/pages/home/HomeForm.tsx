@@ -43,7 +43,8 @@ const HomeForm: FC = () => {
     useEffect(() => {
         const getData = async () => {
             const data = await getHomeTestimonials();
-            setTestimonialData(data);
+            if(data)
+                setTestimonialData(data);
         }
         getData();
     }, [deleteId])
