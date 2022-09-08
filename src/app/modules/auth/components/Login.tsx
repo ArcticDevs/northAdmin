@@ -66,6 +66,13 @@ export function Login() {
   let history = useHistory()
 
   const handleLogin = async () => {
+      if (email === '' || password === '' ) {
+        Swal.fire({
+          title: `Please fill all the fields`,
+          icon: 'info',
+          confirmButtonText: 'Close',
+        })
+      } else {
     try {
       setLoading(true)
 
@@ -105,6 +112,7 @@ export function Login() {
         timer: 2000,
       })
     }
+  }
   }
 
   return (
