@@ -105,11 +105,11 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
           name: pdfFile.name,
           type: 'image/*',
         },
-        fname: 'MySQLtoExcelProject',
+        fname: 'NorthAdminPanelAssets',
       }
 
       fetch(
-        'https://script.google.com/macros/s/AKfycbzC3VMv3bztoNtAhiPpyDB_m06JPv33q11AfpdjglpzJuPojZOioPMCU95oSb7UaN6bdw/exec',
+        'https://script.google.com/macros/s/AKfycbwJBhbEFgQOxAkq1ubSbLLwDmu0QeF5H9TI2Q4yeTWDx6g_f3-d8BF11e8J5JuCI61pAQ/exec',
         {
           method: 'POST',
           body: JSON.stringify(dataSend),
