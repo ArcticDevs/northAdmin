@@ -107,11 +107,11 @@ const DashboardApp = () => {
           name: pdfFile.name,
           type: 'image/*',
         },
-        fname: 'MySQLtoExcelProject',
+        fname: 'NorthAdminPanelAssets',
       }
 
       fetch(
-        'https://script.google.com/macros/s/AKfycbzC3VMv3bztoNtAhiPpyDB_m06JPv33q11AfpdjglpzJuPojZOioPMCU95oSb7UaN6bdw/exec',
+        'https://script.google.com/macros/s/AKfycbwJBhbEFgQOxAkq1ubSbLLwDmu0QeF5H9TI2Q4yeTWDx6g_f3-d8BF11e8J5JuCI61pAQ/exec',
         {
           method: 'POST',
           body: JSON.stringify(dataSend),
@@ -149,8 +149,9 @@ const DashboardApp = () => {
 
   var tp = {
     url: 'https://drive.google.com/file/d/1Ap9vEjVx4qfWju3fTNVdUW5uUHm0gYQ2/view?usp=drivesdk',
-    id: '1FlkS4i3gnDv1Uy-X14SIawheeUBqFxLO',
+    id: '1pyOhqZ8e75pmMmsTZX-490p6-DIrIRQc',
   }
+
 
   const handleDelete = () => {
 
@@ -159,7 +160,7 @@ const DashboardApp = () => {
     }
 
     fetch(
-      'https://script.google.com/macros/s/AKfycbxi4PmbXUWSdRGLh3TSOB2yb20EbW2TZ4z_FyqqQjYz4ZEDlGZWHtB0hYeDbKFoAMsh9Q/exec',
+      'https://script.google.com/macros/s/AKfycbx1ugXthrEUjcI4x2OcdgE0ln3cSvtEhP4jLHWAVKW3Ic63xIsKBZKauC76SbZNBrDa/exec',
       {
         method: 'POST',
         body: JSON.stringify(dataSend),
@@ -174,36 +175,36 @@ const DashboardApp = () => {
 
   //will listen if uploadedFiles state was updated with the rresponse data from google drive upload api
   //and according to it we will send those data to the backend
-  //   useEffect(() => {
-  //     // console.log(uploadedFiles);
+    useEffect(() => {
+      // console.log(uploadedFiles);
 
-  //     const handleUploadToDB = async () => {
-  //       const res = await axios.put(`/api/order/upload/file/1`, uploadedFiles)
+      const handleUploadToDB = async () => {
+        const res = await axios.put(`/api/order/upload/file/1`, uploadedFiles)
 
-  //       // console.log(res);
-  //       setUploadLoading(false)
-  //       setUploadedFiles(null)
+        // console.log(res);
+        setUploadLoading(false)
+        setUploadedFiles(null)
 
-  //       if (res.status === 201) {
-  //         Swal.fire({
-  //           title: 'Files Uploaded Successfully!',
-  //           icon: 'success',
-  //           confirmButtonText: 'Close',
-  //         })
-  //       } else {
-  //         Swal.fire({
-  //           title: 'Error Occured , please try again',
-  //           icon: 'error',
-  //           confirmButtonText: 'Close',
-  //         })
+        if (res.status === 201) {
+          Swal.fire({
+            title: 'Files Uploaded Successfully!',
+            icon: 'success',
+            confirmButtonText: 'Close',
+          })
+        } else {
+          Swal.fire({
+            title: 'Error Occured , please try again',
+            icon: 'error',
+            confirmButtonText: 'Close',
+          })
 
-  //         setPdfFiles([])
-  //       }
-  //     }
+          setPdfFiles([])
+        }
+      }
 
-  //     //adding set timeout so that both the pdf's url are acquired first , before making the api call to backend
-  //     uploadedFiles && setTimeout(() => handleUploadToDB(), 5000)
-  //   }, [uploadedFiles])
+      //adding set timeout so that both the pdf's url are acquired first , before making the api call to backend
+      uploadedFiles && setTimeout(() => handleUploadToDB(), 5000)
+    }, [uploadedFiles])
 
   return (
     <div className='d-flex flex-column align-items-center' style={{marginRight: '10%'}}>
@@ -272,13 +273,13 @@ const DashboardApp = () => {
       <button className='btn btn-warning mt-5' onClick={handleDelete}>
         Delete
       </button>
-      {/* <div>
-        {uploadedFiles?.length &&
+      <div>
+        {/* {uploadedFiles?.length &&
           uploadedFiles.map((curr) => (
             <img src={`https://drive.google.com/uc?export=view&id=${curr.url.substring(32,65)}`} alt='drive' />
-          ))} */}
+          ))}  */}
       {/* "https://drive.google.com/file/d/1zN-F-iigMNwC8L7NSReo09kJI_oaOjb_/view?usp=drivesdk" */}
-      {/* </div> */}
+      </div>
     </div>
   )
 }
