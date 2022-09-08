@@ -6,13 +6,13 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { postImages } from '../ApiCalls/SliderApiCalls';
 
-const Slider = ({ imageFunc, withForm, sliderNum }) => {
+const Slider = ({ imageFunc, withForm, sliderNum, pageValue }) => {
 
   const [pdfFiles, setPdfFiles] = useState([])
   // const [showDropArea, setShowDropArea] = useState(true)
   // const [showUploadBtn, setShowUploadBtn] = useState(false)
 
-  const [uploadedFiles, setUploadedFiles] = useState(null)
+  const [uploadedFiles, setUploadedFiles] = useState([])
   const [uploadLoading, setUploadLoading] = useState(false)
 
   const [image, setImage] = useState("");
@@ -50,7 +50,7 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
 
       setCreateObjectURL(URL.createObjectURL(Addedfile[0]));
       tempObj.name = Addedfile[0].name
-      
+
       setImage(tempObj);
 
       if (
@@ -81,7 +81,7 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
       'image/*': ['.jpg', '.jpeg', '.png', '.svg'],
     },
   })
-  
+
   const handleUpload = () => {
     // console.log(orderDetails);
     // console.log(pdfFiles);
@@ -90,65 +90,56 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
     setCreateObjectURLArray([...createObjectURLArray, createObjectURL]);
     setCreateObjectURL("")
 
-    let uploadedFileDetails = []
+    let uploadedFileObj = {
+      name: '',
+      url: '',
+      id: '',
+      type: 'image/*',
+    }
 
-    // pdfFiles.map((pdfFile) => {
-      let uploadedFileObj = {
-        name: '',
-        url: '',
-        id: '',
+    let dataSend = {
+      dataReq: {
+        data: image.file,
+        name: image.name,
         type: 'image/*',
+      },
+      fname: 'NorthAdminPanelAssets',
+    }
+
+    fetch(
+      'https://script.google.com/macros/s/AKfycbwJBhbEFgQOxAkq1ubSbLLwDmu0QeF5H9TI2Q4yeTWDx6g_f3-d8BF11e8J5JuCI61pAQ/exec',
+      {
+        method: 'POST',
+        body: JSON.stringify(dataSend),
       }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        setUploadLoading(false)
 
-      let dataSend = {
-        dataReq: {
-          data: image.file,
-          name: image.name,
-          type: 'image/*',
-        },
-        fname: 'NorthAdminPanelAssets',
-      }
+        uploadedFileObj.name = image.name
+        uploadedFileObj.url = data.url
+        uploadedFileObj.id = data.id
 
-      fetch(
-        'https://script.google.com/macros/s/AKfycbwJBhbEFgQOxAkq1ubSbLLwDmu0QeF5H9TI2Q4yeTWDx6g_f3-d8BF11e8J5JuCI61pAQ/exec',
-        {
-          method: 'POST',
-          body: JSON.stringify(dataSend),
-        }
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          // console.log(data)
-          setUploadLoading(false)
+        setUploadedFiles([...uploadedFiles,uploadedFileObj])
+      })
+      .catch((err) => {
+        console.log(err)
 
-          uploadedFileObj.name = image.name
-          uploadedFileObj.url = data.url
-          uploadedFileObj.id = data.id
-
-          dataSend = {};
-
-          uploadedFileDetails.push(uploadedFileObj)
-          setUploadedFiles(uploadedFileDetails)
+        Swal.fire({
+          title: 'Error Occured , please try again',
+          icon: 'error',
+          confirmButtonText: 'Close',
         })
-        .catch((err) => {
-          console.log(err)
 
-          Swal.fire({
-            title: 'Error Occured , please try again',
-            icon: 'error',
-            confirmButtonText: 'Close',
-          })
-
-          setUploadLoading(false)
-          setPdfFiles([])
-          setUploadedFiles(null)
-        })
-    // })
-
-    // console.log(uploadedFileDetails)
+        setUploadLoading(false)
+        // setPdfFiles([])
+        setUploadedFiles([])
+      })
   }
 
-  console.log(pdfFiles)
+  console.log(uploadedFiles)
 
   function selectFewerProps(show) {
     const { id, url } = show;
@@ -172,7 +163,7 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
   return (
     <>
       <form className='row my-5' onSubmit={handleSliderSubmit}>
-        <label {...getRootProps({onClick: evt => evt.preventDefault()})} htmlFor={`sliderImage${sliderNum}`} className="form-label col-md-6">
+        <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`sliderImage${sliderNum}`} className="form-label col-md-6">
           <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
             {createObjectURL === "" ?
               <>
