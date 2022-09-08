@@ -76,11 +76,11 @@ export function Registration() {
 
       const res = await registerUser(email, username, password)
 
-      if (res && res.status === 201 && res.data.message === "User already exists, please try logging in") {
+      if (res?.status === 200) {
         setLoading(false)   
 
         Swal.fire({
-          title: `${res.data.message}`,
+          title: `${res?.data.message}`,
           icon: 'info',
           confirmButtonText: 'Close'
         }).then(() => history.push('/auth/login'))
