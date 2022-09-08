@@ -9,7 +9,7 @@ export const postImages = async (images) => {
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
     try {
-        const response = await axios.post(`${slideApiURL}/add/${adminId}`, images)
+        const response = await axios.post(`${slideApiURL}/add/${adminId}`, {images})
         console.log(response)
         if (response.status === 201) {
             Swal.fire({
