@@ -11,6 +11,7 @@ import { getImages } from '../../ApiCalls/SliderApiCalls'
 const AboutForm = () => {
     const intl = useIntl()
 
+    const [sliderArray, setSliderArray] = useState([]);
     const [image, setImage] = useState("");
     const [createObjectURL, setCreateObjectURL] = useState("");
 
@@ -52,14 +53,15 @@ const AboutForm = () => {
         setFormData(initialState)
     };
 
-    // useEffect(() => {
-    //     const getSliderImages = async () => {
-    //         const data = await getImages();
-    //     }
-    //     getSliderImages();
-    // }, [])
+    useEffect(() => {
+        const getSliderImages = async () => {
+            const data = await getImages();
+            setSliderArray(data[data.length - 1].sliderImages);
+        }
+        getSliderImages();
+    }, [])
 
-
+    console.log(sliderArray)
     return (
         <>
             <PageTitle breadcrumbs={[]}>{intl.formatMessage({ id: 'MENU.DASHBOARD' })}</PageTitle>
@@ -129,8 +131,17 @@ const AboutForm = () => {
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data">
                     <h1>Slider 1 (Above Vision Section)</h1>
-                    <div className='d-flex flex-row flex-wrap justify-content-start'>
-                        
+                    <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'>
+                        {sliderArray && sliderArray.length < 1 ? <h3>No Data</h3> :
+                            sliderArray.map((val, index) =>
+                                <div>
+                                    <img style={{ width: "80px", height: "50px", display: 'block' }} src={`https://drive.google.com/uc?export=view&id=${val.url.substring(32, 65)}`} key={index} alt="upload_Image" />
+                                    <div>
+                                        <button className='btn btn-icon btn-danger p-0'><i className='bi bi-trash-fill'></i></button>
+                                    </div>
+                                </div>
+                            )
+                        }
                     </div>
                     <h1>Slider 2 (After Recognitions Table)</h1>
                     {/* <div className='d-flex flex-row flex-wrap justify-content-start'>

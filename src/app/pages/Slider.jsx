@@ -15,7 +15,7 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
   const [uploadedFiles, setUploadedFiles] = useState(null)
   const [uploadLoading, setUploadLoading] = useState(false)
 
-  // const [image, setImage] = useState("");
+  const [image, setImage] = useState("");
   // const [imageArray, setImageArray] = useState([]);
   const [createObjectURL, setCreateObjectURL] = useState("");
   const [createObjectURLArray, setCreateObjectURLArray] = useState([]);
@@ -48,10 +48,10 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
         // console.log(e.target.result.split(',')[1])
       }
 
-      // setImage(Addedfile[0]);
       setCreateObjectURL(URL.createObjectURL(Addedfile[0]));
-
       tempObj.name = Addedfile[0].name
+      
+      setImage(tempObj);
 
       if (
         (tempPdfFiles && tempPdfFiles[0] && tempPdfFiles[0].name === tempObj.name) ||
@@ -81,17 +81,18 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
       'image/*': ['.jpg', '.jpeg', '.png', '.svg'],
     },
   })
-
+  
   const handleUpload = () => {
     // console.log(orderDetails);
     // console.log(pdfFiles);
     setUploadLoading(true)
+    console.log(image)
     setCreateObjectURLArray([...createObjectURLArray, createObjectURL]);
     setCreateObjectURL("")
 
     let uploadedFileDetails = []
 
-    pdfFiles.map((pdfFile) => {
+    // pdfFiles.map((pdfFile) => {
       let uploadedFileObj = {
         name: '',
         url: '',
@@ -101,8 +102,8 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
 
       let dataSend = {
         dataReq: {
-          data: pdfFile.file,
-          name: pdfFile.name,
+          data: image.file,
+          name: image.name,
           type: 'image/*',
         },
         fname: 'NorthAdminPanelAssets',
@@ -117,12 +118,14 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
       )
         .then((res) => res.json())
         .then((data) => {
-          console.log(data)
+          // console.log(data)
           setUploadLoading(false)
 
-          uploadedFileObj.name = pdfFile.name
+          uploadedFileObj.name = image.name
           uploadedFileObj.url = data.url
           uploadedFileObj.id = data.id
+
+          dataSend = {};
 
           uploadedFileDetails.push(uploadedFileObj)
           setUploadedFiles(uploadedFileDetails)
@@ -140,9 +143,9 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
           setPdfFiles([])
           setUploadedFiles(null)
         })
-    })
+    // })
 
-    console.log(uploadedFileDetails)
+    // console.log(uploadedFileDetails)
   }
 
   console.log(pdfFiles)
@@ -169,7 +172,7 @@ const Slider = ({ imageFunc, withForm, sliderNum }) => {
   return (
     <>
       <form className='row my-5' onSubmit={handleSliderSubmit}>
-        <label {...getRootProps()} htmlFor={`sliderImage${sliderNum}`} className="form-label col-md-6">
+        <label {...getRootProps({onClick: evt => evt.preventDefault()})} htmlFor={`sliderImage${sliderNum}`} className="form-label col-md-6">
           <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
             {createObjectURL === "" ?
               <>
