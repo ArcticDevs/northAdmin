@@ -5,7 +5,7 @@ import { PageTitle } from '../../../_metronic/layout/core'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 
-const PropertyForm: FC = () => {
+const PropertyForm = () => {
     const intl = useIntl()
 
     const initialState = {
@@ -18,11 +18,11 @@ const PropertyForm: FC = () => {
 
     const { name, testimonialContent, designation } = formData;
 
-    const handleFormDataChange = (e: any) => {
+    const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         console.log(formData)
         setFormData(initialState)
@@ -96,4 +96,4 @@ const PropertyForm: FC = () => {
     )
 }
 
-export { PropertyForm }
+export default PropertyForm;

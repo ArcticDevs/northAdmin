@@ -1,18 +1,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, FC } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
-import { KTSVG } from '../../../_metronic/helpers'
+import Slider from '../Slider'
+import { KTSVG } from "../../../_metronic/helpers"
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
+import { getImages } from '../../ApiCalls/SliderApiCalls'
 
-const LibraryForm: FC = () => {
+const AboutForm = () => {
     const intl = useIntl()
 
     const [image, setImage] = useState("");
     const [createObjectURL, setCreateObjectURL] = useState("");
 
-    const handleImage = (event: any) => {
+    const handleImage = (event) => {
         if (event.target.files && event.target.files[0]) {
             const i = event.target.files[0];
             setImage(i);
@@ -20,38 +22,43 @@ const LibraryForm: FC = () => {
         }
     };
 
-    const [pdfFile, setPdfFile] = useState("");
-
-    const handlePDF = (event: any) => {
-        if (event.target.files && event.target.files[0]) {
-            const i = event.target.files[0];
-            setPdfFile(i);
-        }
-    };
+    const [checkboxValue, setCheckboxValue] = useState(false);
 
     const initialState = {
-        bookImage: image,
-        title: "",
-        author: "",
-        year: "",
-        pdf: pdfFile,
-        link: "",
+        defaultTeamImage: checkboxValue,
+        teamImage: image,
+        category: "",
+        name: "",
+        job: "",
+        location: "",
     }
 
     const [formData, setFormData] = useState(initialState)
 
-    const { title, author, year, link } = formData;
+    const { name, job, location } = formData;
 
-    const handleFormDataChange = (e: any) => {
+    const handleSelect = (e) => {
+        setFormData({ ...formData, category: e.target.value })
+    }
+
+    const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        formData.bookImage = image;
+        formData.defaultTeamImage = checkboxValue;
         console.log(formData)
         setFormData(initialState)
     };
+
+    // useEffect(() => {
+    //     const getSliderImages = async () => {
+    //         const data = await getImages();
+    //     }
+    //     getSliderImages();
+    // }, [])
+
 
     return (
         <>
@@ -63,60 +70,85 @@ const LibraryForm: FC = () => {
                 style={{ fontSize: '30px' }}
             >
                 <Tab eventKey="FormTab" title="Form">
-                    <h1>Books Data</h1>
-                    <form onSubmit={handleSubmit} className='row'>
+                    <div className='mb-10'>
+                        <h1>Slider 1 (Above Vision Section)</h1>
+                        <Slider pageValue='about' sliderNum={1} withForm={false} />
+                    </div>
+                    <div className='mb-10'>
+                        <h1>Slider 2 (After Recognitions Table)</h1>
+                        <Slider pageValue='about' sliderNum={2} withForm={false} />
+                    </div>
+                    <h1>Teams Data</h1>
+                    <form className='row g-5' onSubmit={handleSubmit}>
                         <div className="col-md-6">
-                            <label htmlFor='bookImage' className="form-label w-100">
+                            <label htmlFor='teamImage' className="form-label" style={{ width: '100%' }}>
                                 <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                                     {createObjectURL === "" ?
                                         <>
                                             <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
-                                            <h3>Click To Add Book Image</h3>
+                                            <h3>Click To Add Image</h3>
                                         </>
                                         :
                                         <img style={{ width: "100%", height: "100%", display: 'block' }} src={createObjectURL} alt="upload_Image" />
                                     }
                                 </div>
                             </label>
-                            <input hidden required type="file" className="form-control" id="bookImage" name="bookImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
+                            <input hidden required type="file" className="form-control" id="teamImage" name="teamImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
                         </div>
-                        <div className="col-md-6">
+                        <div className='col-md-6'>
                             <div className="mb-5">
-                                <label className="form-label required">Book Title</label>
-                                <input required type="text" className="form-control" id="title" name='title' value={title} onChange={handleFormDataChange} />
+                                <input required className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} />
+                                <label className="form-check-label mx-3 required">
+                                    Is it a default Team-Image?
+                                </label>
                             </div>
                             <div className="mb-5">
-                                <label className="form-label required">Author</label>
-                                <input required type="text" className="form-control" id="author" name='author' value={author} onChange={handleFormDataChange} />
+                                <select onChange={handleSelect} className="form-select" aria-label="Default select example" required>
+                                    <option value="">Team Category</option>
+                                    <option value="core">Core</option>
+                                    <option value="intern">Intern</option>
+                                    <option value="artist">Artist</option>
+                                    <option value="karigar">Karigar</option>
+                                </select>
                             </div>
                             <div className="mb-5">
-                                <label className="form-label">Date/Year</label>
-                                <input type="text" className="form-control" id="year" name='year' value={year} onChange={handleFormDataChange} />
+                                <label className="form-label required">Name</label>
+                                <input required type="text" disabled={checkboxValue ? true : false} className="form-control" name='name' id="name" value={checkboxValue ? "" : name} onChange={handleFormDataChange} />
                             </div>
                             <div className="mb-5">
-                                <label className="form-label">Book PDF File</label>
-                                <input type="file" className="form-control" id="bookPdf" name="bookPdf" onChange={handlePDF} accept=".pdf" />
+                                <label className="form-label required">Job</label>
+                                <input required type="text" disabled={checkboxValue ? true : false} className="form-control" name='job' id="job" value={checkboxValue ? "" : job} onChange={handleFormDataChange} />
                             </div>
                             <div className="mb-5">
-                                <label className="form-label">Link</label>
-                                <input type="text" className="form-control" id="link" name='link' value={link} onChange={handleFormDataChange} />
+                                <label className="form-label required">Location</label>
+                                <input required type="text" disabled={checkboxValue ? true : false} className="form-control" name='location' id="location" value={checkboxValue ? "" : location} onChange={handleFormDataChange} />
                             </div>
                             <button type="submit" className="btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data">
-                    <h1>Books Data</h1>
+                    <h1>Slider 1 (Above Vision Section)</h1>
+                    <div className='d-flex flex-row flex-wrap justify-content-start'>
+                        
+                    </div>
+                    <h1>Slider 2 (After Recognitions Table)</h1>
+                    {/* <div className='d-flex flex-row flex-wrap justify-content-start'>
+                        {createObjectURLArray.map((val, index) =>
+                            <img style={{ width: "80px", height: "50px", display: 'block' }} src={val} key={index} alt="upload_Image" />
+                        )}
+                    </div> */}
+                    <h1>Teams Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
                             <thead>
                                 <tr className='fs-3 fw-bold border-bottom-2'>
                                     <th>S.NO</th>
                                     <th>Image</th>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Year</th>
-                                    <th>Link</th>
+                                    <th>Name</th>
+                                    <th>Team</th>
+                                    <th>Job</th>
+                                    <th>Location</th>
                                     <th>Operation</th>
                                 </tr>
                             </thead>
@@ -127,7 +159,7 @@ const LibraryForm: FC = () => {
                                     <td>Mark</td>
                                     <td>Core</td>
                                     <td>Intern</td>
-                                    <td>Intern</td>
+                                    <td>GR</td>
                                     <td>
                                         <button type="button" className="btn btn-danger btn-sm">Delete</button>
                                     </td>
@@ -138,7 +170,7 @@ const LibraryForm: FC = () => {
                                     <td>Otto</td>
                                     <td>Otto</td>
                                     <td>Otto</td>
-                                    <td>Otto</td>
+                                    <td>@mdo</td>
                                     <td>
                                         <button type="button" className="btn btn-danger btn-sm">Delete</button>
                                     </td>
@@ -152,4 +184,4 @@ const LibraryForm: FC = () => {
     )
 }
 
-export { LibraryForm }
+export default AboutForm;

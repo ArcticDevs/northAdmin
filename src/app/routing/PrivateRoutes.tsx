@@ -1,16 +1,16 @@
-import React, {Suspense, lazy} from 'react'
-import {Redirect, Route, Switch} from 'react-router-dom'
-import {FallbackView} from '../../_metronic/partials'
+import React, { Suspense, lazy } from 'react'
+import { Redirect, Route, Switch } from 'react-router-dom'
+import { FallbackView } from '../../_metronic/partials'
 import { HomeForm } from '../pages/home/HomeForm'
-import { AboutForm } from '../pages/about/AboutForm'
-import { ArchitectureForm } from '../pages/architecture/ArchitectureForm'
-import { PropertyForm } from '../pages/stay/PropertyForm'
-import { ExperienceForm } from '../pages/experience/ExperienceForm'
-import { WorkshopForm } from '../pages/workshop/WorkshopForm'
-import { LibraryForm } from '../pages/library/LibraryForm'
-import { PressForm } from '../pages/press/PressForm'
+import AboutForm from '../pages/about/AboutForm.jsx'
+import ArchitectureForm from '../pages/architecture/ArchitectureForm'
+import PropertyForm from '../pages/stay/PropertyForm'
+import ExperienceForm from '../pages/experience/ExperienceForm'
+import WorkshopForm from '../pages/workshop/WorkshopForm'
+import LibraryForm from '../pages/library/LibraryForm'
+import PressForm from '../pages/press/PressForm'
 // import {DashboardWrapper} from '../pages/dashboard/DashboardWrapper'
-import {MenuTestPage} from '../pages/MenuTestPage'
+import { MenuTestPage } from '../pages/MenuTestPage'
 import Test from '../pages/test'
 
 export function PrivateRoutes() {
@@ -24,7 +24,7 @@ export function PrivateRoutes() {
   return (
     <Suspense fallback={<FallbackView />}>
       <Switch>
-      {/* <Route path='/test' component={Test} /> */}
+        {/* <Route path='/test' component={Test} /> */}
         <Route path='/home' component={HomeForm} />
         <Route path='/about' component={AboutForm} />
         <Route path='/architecture' component={ArchitectureForm} />

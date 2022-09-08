@@ -6,13 +6,13 @@ import { KTSVG } from '../../../_metronic/helpers'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 
-const PressForm: FC = () => {
+const LibraryForm = () => {
     const intl = useIntl()
 
     const [image, setImage] = useState("");
     const [createObjectURL, setCreateObjectURL] = useState("");
 
-    const handleImage = (event: any) => {
+    const handleImage = (event) => {
         if (event.target.files && event.target.files[0]) {
             const i = event.target.files[0];
             setImage(i);
@@ -20,30 +20,35 @@ const PressForm: FC = () => {
         }
     };
 
-    const [checkboxValue, setCheckboxValue] = useState(false);
+    const [pdfFile, setPdfFile] = useState("");
+
+    const handlePDF = (event) => {
+        if (event.target.files && event.target.files[0]) {
+            const i = event.target.files[0];
+            setPdfFile(i);
+        }
+    };
 
     const initialState = {
-        video: checkboxValue,
-        pressImage: image,
+        bookImage: image,
         title: "",
-        content: "",
-        article: "",
-        date: "",
-        pressLink: "",
+        author: "",
+        year: "",
+        pdf: pdfFile,
+        link: "",
     }
 
     const [formData, setFormData] = useState(initialState)
 
-    const { title, content, article, date, pressLink } = formData;
+    const { title, author, year, link } = formData;
 
-    const handleFormDataChange = (e: any) => {
+    const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        formData.video = checkboxValue;
-        formData.pressImage = image;
+        formData.bookImage = image;
         console.log(formData)
         setFormData(initialState)
     };
@@ -58,56 +63,50 @@ const PressForm: FC = () => {
                 style={{ fontSize: '30px' }}
             >
                 <Tab eventKey="FormTab" title="Form">
-                    <h1>Press Data</h1>
-                    <form onSubmit={handleSubmit} className="row">
+                    <h1>Books Data</h1>
+                    <form onSubmit={handleSubmit} className='row'>
                         <div className="col-md-6">
-                            <label htmlFor='pressImage' className="form-label w-100">
+                            <label htmlFor='bookImage' className="form-label w-100">
                                 <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                                     {createObjectURL === "" ?
                                         <>
                                             <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
-                                            <h3>Click To Add Video Thumbnail</h3>
+                                            <h3>Click To Add Book Image</h3>
                                         </>
                                         :
                                         <img style={{ width: "100%", height: "100%", display: 'block' }} src={createObjectURL} alt="upload_Image" />
                                     }
                                 </div>
                             </label>
-                            <input hidden required type="file" className="form-control" disabled={checkboxValue ? false : true} id="pressImage" name="pressImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
+                            <input hidden required type="file" className="form-control" id="bookImage" name="bookImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
                         </div>
-                        <div className="col-md-6 m-xs-10">
+                        <div className="col-md-6">
                             <div className="mb-5">
-                                <input className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} required />
-                                <label className="form-check-label mx-3 required">
-                                    Has Video Link
-                                </label>
-                            </div>
-                            <div className="mb-5">
-                                <label className="form-label required">Title</label>
+                                <label className="form-label required">Book Title</label>
                                 <input required type="text" className="form-control" id="title" name='title' value={title} onChange={handleFormDataChange} />
                             </div>
                             <div className="mb-5">
-                                <label className="form-label required">Content</label>
-                                <textarea required className="form-control" rows={7} id="content" disabled={checkboxValue ? true : false} name='content' value={checkboxValue ? "" : content} onChange={handleFormDataChange}></textarea>
+                                <label className="form-label required">Author</label>
+                                <input required type="text" className="form-control" id="author" name='author' value={author} onChange={handleFormDataChange} />
                             </div>
                             <div className="mb-5">
-                                <label className="form-label required">Date</label>
-                                <input required type="text" className="form-control" id="date" name='date' value={date} onChange={handleFormDataChange} />
+                                <label className="form-label">Date/Year</label>
+                                <input type="text" className="form-control" id="year" name='year' value={year} onChange={handleFormDataChange} />
                             </div>
                             <div className="mb-5">
-                                <label className="form-label required">Article Name</label>
-                                <input required type="text" className="form-control" id="article" name='article' value={article} onChange={handleFormDataChange} />
+                                <label className="form-label">Book PDF File</label>
+                                <input type="file" className="form-control" id="bookPdf" name="bookPdf" onChange={handlePDF} accept=".pdf" />
                             </div>
                             <div className="mb-5">
-                                <label className="form-label required">Press News Link</label>
-                                <input required type="text" className="form-control" id="pressLink" name='pressLink' value={pressLink} onChange={handleFormDataChange} />
+                                <label className="form-label">Link</label>
+                                <input type="text" className="form-control" id="link" name='link' value={link} onChange={handleFormDataChange} />
                             </div>
                             <button type="submit" className="btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data">
-                    <h1>Press Data</h1>
+                    <h1>Books Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
                             <thead>
@@ -115,9 +114,8 @@ const PressForm: FC = () => {
                                     <th>S.NO</th>
                                     <th>Image</th>
                                     <th>Title</th>
-                                    <th>Content</th>
-                                    <th>Date</th>
-                                    <th>Article Name</th>
+                                    <th>Author</th>
+                                    <th>Year</th>
                                     <th>Link</th>
                                     <th>Operation</th>
                                 </tr>
@@ -130,7 +128,6 @@ const PressForm: FC = () => {
                                     <td>Core</td>
                                     <td>Intern</td>
                                     <td>Intern</td>
-                                    <td>Intern</td>
                                     <td>
                                         <button type="button" className="btn btn-danger btn-sm">Delete</button>
                                     </td>
@@ -138,7 +135,6 @@ const PressForm: FC = () => {
                                 <tr>
                                     <td>1</td>
                                     <td>Mark</td>
-                                    <td>Otto</td>
                                     <td>Otto</td>
                                     <td>Otto</td>
                                     <td>Otto</td>
@@ -156,4 +152,4 @@ const PressForm: FC = () => {
     )
 }
 
-export { PressForm }
+export default LibraryForm;

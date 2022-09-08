@@ -1,27 +1,27 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, FC } from 'react'
 import { useIntl } from 'react-intl'
-import { Slider } from '../Slider'
+import Slider from '../Slider'
 import { PageTitle } from '../../../_metronic/layout/core'
 import { ImageArray } from '../ImageArray'
 import { KTSVG } from '../../../_metronic/helpers'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 
-const ArchitectureForm: FC = () => {
+const ArchitectureForm = () => {
     const intl = useIntl()
 
-    const [imageArray, setImageArray] = useState<string[]>([]);
+    const [imageArray, setImageArray] = useState([]);
     console.log(imageArray)
 
-    const handleImageFunc = (n: any) => {
+    const handleImageFunc = (n) => {
         setImageArray(n)
     }
 
     const [image, setImage] = useState("");
     const [createObjectURL, setCreateObjectURL] = useState("");
 
-    const handleImage = (event: any) => {
+    const handleImage = (event) => {
         if (event.target.files && event.target.files[0]) {
             const i = event.target.files[0];
             setImage(i);
@@ -48,22 +48,22 @@ const ArchitectureForm: FC = () => {
 
     const { projectTitle, projectContent } = formDataProject;
 
-    const handleFormDataResearchChange = (e: any) => {
+    const handleFormDataResearchChange = (e) => {
         setFormDataResearch({ ...formDataResearch, [e.target.name]: e.target.value });
     };
 
-    const handleSubmitResearch = (e: any) => {
+    const handleSubmitResearch = (e) => {
         e.preventDefault();
         formDataResearch.researchImages = imageArray
         console.log(formDataResearch)
         setFormDataResearch(initialStateResearch)
     };
 
-    const handleFormDataProjectChange = (e: any) => {
+    const handleFormDataProjectChange = (e) => {
         setFormDataProject({ ...formDataProject, [e.target.name]: e.target.value });
     };
 
-    const handleSubmitProject = (e: any) => {
+    const handleSubmitProject = (e) => {
         e.preventDefault();
         formDataProject.projectImage = image
         console.log(formDataProject)
@@ -232,4 +232,4 @@ const ArchitectureForm: FC = () => {
     )
 }
 
-export { ArchitectureForm }
+export default ArchitectureForm;

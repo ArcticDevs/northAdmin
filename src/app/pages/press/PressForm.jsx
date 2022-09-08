@@ -2,25 +2,17 @@
 import React, { useState, FC } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
-import { Slider } from '../Slider'
 import { KTSVG } from '../../../_metronic/helpers'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 
-const WorkshopForm: FC = () => {
+const PressForm = () => {
     const intl = useIntl()
-
-    const [imageArray, setImageArray] = useState<string[]>([]);
-    console.log(imageArray)
-
-    const handleImageFunc = (n: any) => {
-        setImageArray(n)
-    }
 
     const [image, setImage] = useState("");
     const [createObjectURL, setCreateObjectURL] = useState("");
 
-    const handleImage = (event: any) => {
+    const handleImage = (event) => {
         if (event.target.files && event.target.files[0]) {
             const i = event.target.files[0];
             setImage(i);
@@ -28,30 +20,30 @@ const WorkshopForm: FC = () => {
         }
     };
 
+    const [checkboxValue, setCheckboxValue] = useState(false);
+
     const initialState = {
-        courseImage: image,
-        type: "",
-        courseTitle: "",
-        courseContent: "",
+        video: checkboxValue,
+        pressImage: image,
+        title: "",
+        content: "",
+        article: "",
         date: "",
-        courseDay: "",
+        pressLink: "",
     }
 
     const [formData, setFormData] = useState(initialState)
 
-    const { courseTitle, courseContent, date, courseDay } = formData;
+    const { title, content, article, date, pressLink } = formData;
 
-    const handleFormDataChange = (e: any) => {
+    const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSelect = (e: any) => {
-        setFormData({ ...formData, type: e.target.value })
-    }
-
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        formData.courseImage = image;
+        formData.video = checkboxValue;
+        formData.pressImage = image;
         console.log(formData)
         setFormData(initialState)
     };
@@ -66,54 +58,53 @@ const WorkshopForm: FC = () => {
                 style={{ fontSize: '30px' }}
             >
                 <Tab eventKey="FormTab" title="Form">
-                    <h1>Workshop Course Table Data</h1>
-                    <form onSubmit={handleSubmit} className="row g-5 mt-5">
-                        <div className="col-md-6 mb-5">
-                            <label htmlFor='workshopImage' className="form-label w-100">
+                    <h1>Press Data</h1>
+                    <form onSubmit={handleSubmit} className="row">
+                        <div className="col-md-6">
+                            <label htmlFor='pressImage' className="form-label w-100">
                                 <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                                     {createObjectURL === "" ?
                                         <>
                                             <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
-                                            <h3>Click To Add Course Image</h3>
+                                            <h3>Click To Add Video Thumbnail</h3>
                                         </>
                                         :
                                         <img style={{ width: "100%", height: "100%", display: 'block' }} src={createObjectURL} alt="upload_Image" />
                                     }
                                 </div>
                             </label>
-                            <input hidden required type="file" className="form-control" id="workshopImage" name="workshopImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
+                            <input hidden required type="file" className="form-control" disabled={checkboxValue ? false : true} id="pressImage" name="pressImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
                         </div>
-                        <div className='col-md-6'>
+                        <div className="col-md-6 m-xs-10">
                             <div className="mb-5">
-                                <select onChange={handleSelect} className="form-select required" aria-label="Default select example" required>
-                                    <option value="">Select Course Type</option>
-                                    <option value="online">Online</option>
-                                    <option value="offline">Offline</option>
-                                </select>
+                                <input className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} required />
+                                <label className="form-check-label mx-3 required">
+                                    Has Video Link
+                                </label>
                             </div>
                             <div className="mb-5">
-                                <label className="form-label required">Course Title</label>
-                                <input required type="text" className="form-control" id="courseTitle" name='courseTitle' value={courseTitle} onChange={handleFormDataChange} />
+                                <label className="form-label required">Title</label>
+                                <input required type="text" className="form-control" id="title" name='title' value={title} onChange={handleFormDataChange} />
                             </div>
                             <div className="mb-5">
-                                <label className="form-label required">Course Data</label>
-                                <textarea required className="form-control" rows={7} id="courseContent" name='courseContent' value={courseContent} onChange={handleFormDataChange}></textarea>
+                                <label className="form-label required">Content</label>
+                                <textarea required className="form-control" rows={7} id="content" disabled={checkboxValue ? true : false} name='content' value={checkboxValue ? "" : content} onChange={handleFormDataChange}></textarea>
                             </div>
                             <div className="mb-5">
-                                <label className="form-label required">Days for Course Completion</label>
-                                <input required type="number" className="form-control" id="courseDay" name='courseDay' value={courseDay} onChange={handleFormDataChange} />
-                            </div>
-                            <div className="mb-5">
-                                <label className="form-label required">Date/Year</label>
+                                <label className="form-label required">Date</label>
                                 <input required type="text" className="form-control" id="date" name='date' value={date} onChange={handleFormDataChange} />
+                            </div>
+                            <div className="mb-5">
+                                <label className="form-label required">Article Name</label>
+                                <input required type="text" className="form-control" id="article" name='article' value={article} onChange={handleFormDataChange} />
+                            </div>
+                            <div className="mb-5">
+                                <label className="form-label required">Press News Link</label>
+                                <input required type="text" className="form-control" id="pressLink" name='pressLink' value={pressLink} onChange={handleFormDataChange} />
                             </div>
                             <button type="submit" className="btn btn-primary">Submit</button>
                         </div>
                     </form>
-                    <div className='my-10'>
-                        <h1>Slider</h1>
-                        <Slider imageFunc={handleImageFunc} withForm={false} pageValue='workshop' sliderNum={1} />
-                    </div>
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data">
                     <h1>Press Data</h1>
@@ -123,11 +114,11 @@ const WorkshopForm: FC = () => {
                                 <tr className='fs-3 fw-bold border-bottom-2'>
                                     <th>S.NO</th>
                                     <th>Image</th>
-                                    <th>Type</th>
                                     <th>Title</th>
                                     <th>Content</th>
-                                    <th>Course Time(Days)</th>
                                     <th>Date</th>
+                                    <th>Article Name</th>
+                                    <th>Link</th>
                                     <th>Operation</th>
                                 </tr>
                             </thead>
@@ -159,16 +150,10 @@ const WorkshopForm: FC = () => {
                             </tbody>
                         </table>
                     </div>
-                    <h1>Slider 1 (Above Projects)</h1>
-                    {/* <div className='d-flex flex-row flex-wrap justify-content-start'>
-                        {createObjectURLArray.map((val, index) =>
-                            <img style={{ width: "80px", height: "50px", display: 'block' }} src={val} key={index} alt="upload_Image" />
-                        )}
-                    </div> */}
                 </Tab>
             </Tabs>
         </>
     )
 }
 
-export { WorkshopForm }
+export default PressForm;

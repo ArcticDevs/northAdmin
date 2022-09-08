@@ -5,6 +5,7 @@ import { PageTitle } from '../../../_metronic/layout/core'
 import { postTestimonial, getHomeTestimonials, deleteTestimonial } from '../../ApiCalls/TestimonialApiCalls';
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
+import Swal from 'sweetalert2'
 
 const HomeForm: FC = () => {
     const intl = useIntl()
@@ -12,13 +13,15 @@ const HomeForm: FC = () => {
     const initialState = {
         category: "",
         name: "",
-        testimonialContent: "",
+        content: "",
         designation: "",
     }
 
+    const [deleteId, setDeleteId] = useState()
+
     const [formData, setFormData] = useState(initialState)
 
-    const { name, testimonialContent, designation } = formData;
+    const { name, content, designation } = formData;
 
     const handleSelect = (e: any) => {
         setFormData({ ...formData, category: e.target.value })
@@ -43,11 +46,26 @@ const HomeForm: FC = () => {
             setTestimonialData(data);
         }
         getData();
-    }, [])
+    }, [deleteId])
 
     const handleDelete = async (id: any) => {
         const del = await deleteTestimonial(id)
-        setTestimonialData(testimonialData.filter((val: any) => val.id !== id));
+        if(del)
+        {
+            Swal.fire({
+                title: 'Testimonial Deleted Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setDeleteId(id);
+        }
+        else {
+            Swal.fire({
+                title: 'Error Occured , please try again',
+                icon: 'error',
+                confirmButtonText: 'Close',
+            })
+        }
     }
 
     return (
@@ -77,7 +95,7 @@ const HomeForm: FC = () => {
                         </div>
                         <div className="mb-5">
                             <label className="form-label required">Testimonial Content</label>
-                            <textarea required className="form-control" rows={7} name='testimonialContent' id='testimonialContent' value={testimonialContent} onChange={handleFormDataChange}></textarea>
+                            <textarea required className="form-control" rows={7} name='content' id='content' value={content} onChange={handleFormDataChange}></textarea>
                         </div>
                         <div className="mb-5">
                             <label className="form-label required">Author Designation</label>
@@ -100,7 +118,7 @@ const HomeForm: FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {testimonialData && testimonialData.length<1 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
+                                {testimonialData && testimonialData.length < 1 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
                                     testimonialData.map((val: any, index: number) =>
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>

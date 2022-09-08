@@ -2,17 +2,17 @@
 import React, { useState, FC } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
-import { Slider } from '../Slider'
+import Slider from '../Slider'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 
-const ExperienceForm: FC = () => {
+const ExperienceForm = () => {
     const intl = useIntl()
 
-    const [imageArray, setImageArray] = useState<string[]>([]);
+    const [imageArray, setImageArray] = useState([]);
     console.log(imageArray)
 
-    const handleImageFunc = (n: any) => {
+    const handleImageFunc = (n) => {
         setImageArray(n)
     }
 
@@ -26,11 +26,11 @@ const ExperienceForm: FC = () => {
 
     const { name, testimonialContent, designation } = formData;
 
-    const handleFormDataChange = (e: any) => {
+    const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         console.log(formData)
         setFormData(initialState)
@@ -114,4 +114,4 @@ const ExperienceForm: FC = () => {
     )
 }
 
-export { ExperienceForm }
+export default ExperienceForm;
