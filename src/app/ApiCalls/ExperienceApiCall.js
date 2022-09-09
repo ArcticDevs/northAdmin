@@ -1,25 +1,24 @@
 import axios from "axios";
 import { url } from './ApiUrl'
 
-const homeApiURL = `${url}/data/homepage/testimonials`
+const expApiURL = `${url}/data/experience`
 
-export const postTestimonial = async (category, name, content, designation) => {
+export const postExperienceTestimonial = async (Experience) => {
     // console.log(formData)
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
     try {
-        const response = await axios.post(`${homeApiURL}/add/${adminId}`, { category, name, content, designation })
+        const response = await axios.post(`${expApiURL}/add/${adminId}`, { Experience })
         console.log(response)
-        return response.data;
     } catch (error) {
         console.error(error)
     }
 
 }
 
-export const getHomeTestimonials = async () => {
+export const getExperienceTestimonials = async () => {
     try {
-        const response = await axios.get(`${homeApiURL}/all`);
+        const response = await axios.get(`${expApiURL}/all`);
         console.log(response)
         return response.data.data;
     } catch (error) {
@@ -27,9 +26,9 @@ export const getHomeTestimonials = async () => {
     }
 }
 
-export const deleteTestimonial = async (testimonialId) => {
+export const deleteExperienceTestimonial = async (testimonialId) => {
     try {
-        const res = await axios.delete(`${homeApiURL}/delete/${testimonialId}`)
+        const res = await axios.delete(`${expApiURL}/delete/${testimonialId}`)
         console.log(res.data)
         return res.data.success;
     } catch (error) {

@@ -8,10 +8,10 @@ export const postImages = async (images) => {
     console.log(images)
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
-    const body = { images }
-    console.log(body)
+    // const body = { images }
+    // console.log(body)
     try {
-        const response = await axios.post(`${slideApiURL}/add/${adminId}`, body)
+        const response = await axios.post(`${slideApiURL}/add/${adminId}`, { images })
         console.log(response)
         if (response.status === 201) {
             Swal.fire({
@@ -25,7 +25,6 @@ export const postImages = async (images) => {
                 icon: 'error',
                 confirmButtonText: 'Close',
             })
-            return response.data.data;
         }
     }
     catch (error) {
@@ -38,7 +37,11 @@ export const getImages = async (sectionValue) => {
     try {
         const response = await axios.get(`${slideApiURL}/get/${sectionValue}`)
         console.log(response)
-        return response.data.data;
+        if(response.data.data.length<1)
+            return { error: true };
+        else {
+            return { error: false, data: response.data.data };
+        }
     }
     catch (error) {
         console.error(error)
@@ -49,7 +52,7 @@ export const deleteImages = async (id) => {
     try {
         const response = await axios.delete(`${slideApiURL}/delete/${id}`)
         console.log(response)
-        return response.data.data;
+        return response.data.success;
     }
     catch (error) {
         console.error(error)

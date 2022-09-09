@@ -1,41 +1,28 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, FC } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
-import { KTSVG } from '../../../_metronic/helpers'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
+import ImageUpload from '../ImageUpload';
+import PdfUpload from '../PdfUpload';
+import Swal from 'sweetalert2';
+import { postLibraryBook, getLibraryBooks, deleteLibraryBook } from '../../ApiCalls/LibraryApiCalls';
 
 const LibraryForm = () => {
     const intl = useIntl()
 
-    const [image, setImage] = useState("");
-    const [createObjectURL, setCreateObjectURL] = useState("");
-
-    const handleImage = (event) => {
-        if (event.target.files && event.target.files[0]) {
-            const i = event.target.files[0];
-            setImage(i);
-            setCreateObjectURL(URL.createObjectURL(i));
-        }
-    };
-
-    const [pdfFile, setPdfFile] = useState("");
-
-    const handlePDF = (event) => {
-        if (event.target.files && event.target.files[0]) {
-            const i = event.target.files[0];
-            setPdfFile(i);
-        }
-    };
+    const [checkboxValue, setCheckboxValue] = useState(false);
 
     const initialState = {
-        bookImage: image,
+        imgId: "",
+        imgURL: "",
         title: "",
         author: "",
-        year: "",
-        pdf: pdfFile,
+        dateYear: "",
+        pdfFileURL: "",
         link: "",
+        isPdf: checkboxValue,
     }
 
     const [formData, setFormData] = useState(initialState)
@@ -46,12 +33,91 @@ const LibraryForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const [imageState, setImageState] = useState(false);
+    const [uploadState, setUploadState] = useState({ pdf: false, image: false });
+
+    const uploadPdf = () => {
+        console.log(formData)
+        postLibraryBook(formData)
+        setFormData(initialState);
+        setImageState(false);
+        setUploadState({ pdf: false, image: false });
+    }
+
+    useEffect(() => {
+        if (uploadState.pdf && uploadState.image) {
+            uploadPdf();
+        }
+    }, [uploadState.pdf, uploadState.image])
+
+    const handleBookPDF = (pdf) => {
+        console.log(pdf)
+        if (pdf.status) {
+            formData.pdfFileURL = pdf.data.url;
+            setUploadState({ ...uploadState, pdf: true })
+        }
+    }
+
+    const handleBookImage = (image) => {
+        console.log(image)
+        if (image.status) {
+            formData.imgId = image.data.id;
+            formData.imgURL = image.data.url;
+            setUploadState({ ...uploadState, image: true })
+        }
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        formData.bookImage = image;
         console.log(formData)
-        setFormData(initialState)
+        setImageState(true);
+        formData.isPdf = checkboxValue;
     };
+
+    const [bookData, setBookData] = useState([])
+    const [deleteCheck, setDeleteCheck] = useState({ state: false, id: "" })
+    const [deleteId, setDeleteId] = useState("")
+
+    useEffect(() => {
+        const getLibraryFunc = async () => {
+            const data = await getLibraryBooks();
+            console.log(data)
+            if (!data.error) {
+                setBookData(data);
+            }
+        }
+        getLibraryFunc();
+    }, [deleteId])
+
+    const handleBookDelete = async (id, imageId) => {
+        let dataSend = {
+            fileId: imageId,
+        }
+
+        setDeleteCheck({ state: true, id: id });
+
+        fetch(
+            'https://script.google.com/macros/s/AKfycbx1ugXthrEUjcI4x2OcdgE0ln3cSvtEhP4jLHWAVKW3Ic63xIsKBZKauC76SbZNBrDa/exec',
+            {
+                method: 'POST',
+                body: JSON.stringify(dataSend),
+            }
+        )
+            .then((res) => res.json())
+            .then(async () => {
+                const del = await deleteLibraryBook(id);
+                if (del) {
+                    Swal.fire({
+                        title: 'Image Deleted Successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'Close',
+                    })
+                    setDeleteCheck({ state: false, id: "" });
+                    setDeleteId(id);
+                }
+            })
+            .catch((err) => console.log(err))
+    }
 
     return (
         <>
@@ -66,19 +132,7 @@ const LibraryForm = () => {
                     <h1>Books Data</h1>
                     <form onSubmit={handleSubmit} className='row'>
                         <div className="col-md-6">
-                            <label htmlFor='bookImage' className="form-label w-100">
-                                <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
-                                    {createObjectURL === "" ?
-                                        <>
-                                            <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
-                                            <h3>Click To Add Book Image</h3>
-                                        </>
-                                        :
-                                        <img style={{ width: "100%", height: "100%", display: 'block' }} src={createObjectURL} alt="upload_Image" />
-                                    }
-                                </div>
-                            </label>
-                            <input hidden required type="file" className="form-control" id="bookImage" name="bookImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
+                            <ImageUpload imageFunc={handleBookImage} imageState={imageState} formName={"libraryPage"} />
                         </div>
                         <div className="col-md-6">
                             <div className="mb-5">
@@ -93,13 +147,18 @@ const LibraryForm = () => {
                                 <label className="form-label">Date/Year</label>
                                 <input type="text" className="form-control" id="year" name='year' value={year} onChange={handleFormDataChange} />
                             </div>
+                            <div className="my-8">
+                                <input className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} />
+                                <label className="form-check-label mx-3 required">
+                                    Has PDF FIle
+                                </label>
+                            </div>
                             <div className="mb-5">
-                                <label className="form-label">Book PDF File</label>
-                                <input type="file" className="form-control" id="bookPdf" name="bookPdf" onChange={handlePDF} accept=".pdf" />
+                                <PdfUpload pdfFunc={handleBookPDF} pageState={imageState} disabled={!checkboxValue} formName={"libraryPage"} />
                             </div>
                             <div className="mb-5">
                                 <label className="form-label">Link</label>
-                                <input type="text" className="form-control" id="link" name='link' value={link} onChange={handleFormDataChange} />
+                                <input type="text" required className="form-control" id="link" name='link' value={link} disabled={checkboxValue ? true : false} onChange={handleFormDataChange} />
                             </div>
                             <button type="submit" className="btn btn-primary">Submit</button>
                         </div>
@@ -121,28 +180,33 @@ const LibraryForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className='fs-5 border-bottom border-gray-500'>
-                                    <td>1</td>
-                                    <td><img style={{ width: "80px", height: "50px", display: 'block' }} src="" alt="Team_Image" /></td>
-                                    <td>Mark</td>
-                                    <td>Core</td>
-                                    <td>Intern</td>
-                                    <td>Intern</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
+                                {bookData && bookData.length > 1 ?
+                                    bookData.map((val, index) =>
+                                        <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
+                                            <td>{index + 1}</td>
+                                            <td><img style={{ width: "80px", height: "50px", display: 'block' }} src={val.imgURL ? `https://drive.google.com/uc?export=view&id=${val.imgURL.substring(32, 65)}` : ""} alt="Team_Image" /></td>
+                                            <td>{val.name}</td>
+                                            <td>{val.title}</td>
+                                            <td>{val.author}</td>
+                                            <td>{val.dateYear}</td>
+                                            <td>{val.link === "" ? val.pdfFileURL : val.link}</td>
+                                            <td>
+                                                {deleteCheck.state && deleteCheck.id === val._id ?
+                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                        <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
+                                                        Deleting...
+                                                    </button>
+                                                    :
+                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleBookDelete(val._id, val.imgId)}>Delete</button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    )
+                                    :
+                                    <tr>
+                                        <td colSpan={7} className="text-center">No Data</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>

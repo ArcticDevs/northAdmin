@@ -11,7 +11,7 @@ import LibraryForm from '../pages/library/LibraryForm.jsx'
 import PressForm from '../pages/press/PressForm.jsx'
 // import {DashboardWrapper} from '../pages/dashboard/DashboardWrapper'
 import { MenuTestPage } from '../pages/MenuTestPage'
-import Test from '../pages/test'
+// import Test from '../pages/test'
 
 export function PrivateRoutes() {
   const BuilderPageWrapper = lazy(() => import('../pages/layout-builder/BuilderPageWrapper'))

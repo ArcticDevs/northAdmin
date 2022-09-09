@@ -1,11 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, FC } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
 import Slider from '../Slider'
 import { KTSVG } from '../../../_metronic/helpers'
+import SlideShow from '../SlideShow'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
+import ImageUpload from '../ImageUpload'
+import Swal from 'sweetalert2'
+import { postWorkshopCourse, getWorkshopCourses, deleteWorkshopCourse } from '../../ApiCalls/WorkshopApiCalls'
 
 const WorkshopForm = () => {
     const intl = useIntl()
@@ -17,29 +21,19 @@ const WorkshopForm = () => {
         setImageArray(n)
     }
 
-    const [image, setImage] = useState("");
-    const [createObjectURL, setCreateObjectURL] = useState("");
-
-    const handleImage = (event) => {
-        if (event.target.files && event.target.files[0]) {
-            const i = event.target.files[0];
-            setImage(i);
-            setCreateObjectURL(URL.createObjectURL(i));
-        }
-    };
-
     const initialState = {
-        courseImage: image,
-        type: "",
-        courseTitle: "",
-        courseContent: "",
-        date: "",
-        courseDay: "",
+        imgId: "",
+        imgURL: "",
+        course: "",
+        title: "",
+        data: "",
+        days: "",
+        dateYear: "",
     }
 
     const [formData, setFormData] = useState(initialState)
 
-    const { courseTitle, courseContent, date, courseDay } = formData;
+    const { title, data, dateYear, days } = formData;
 
     const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -49,12 +43,81 @@ const WorkshopForm = () => {
         setFormData({ ...formData, type: e.target.value })
     }
 
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     formData.courseImage = image;
+    //     console.log(formData)
+    //     setFormData(initialState)
+    // };
+
+    const [imageState, setImageState] = useState(false);
+    const [teamsData, setTeamsData] = useState([])
+    const [deleteCheck, setDeleteCheck] = useState({ state: false, id: "" })
+    const [deleteId, setDeleteId] = useState("")
+
+    const handleCourse = (image) => {
+        console.log(image)
+        if (image && image.status) {
+            formData.imgId = image.data.id;
+            formData.imgURL = image.data.url;
+            const date = new Date(dateYear);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            formData.dateYear = date.toLocaleDateString('en-GB', options);
+            console.log(formData)
+            // const Workshop = {
+            //     Workshop: formData
+            // }
+            postWorkshopCourse(formData);
+            setImageState(false);
+            setFormData(initialState);
+        }
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        formData.courseImage = image;
-        console.log(formData)
-        setFormData(initialState)
+        setImageState(true)
     };
+
+    useEffect(() => {
+        const getTeamsDataFunc = async () => {
+            const data = await getWorkshopCourses();
+            console.log(data)
+            if (!data.error) {
+                setTeamsData(data);
+            }
+        }
+        getTeamsDataFunc();
+    }, [deleteId])
+
+    const handleTeamDelete = async (id, imageId) => {
+        let dataSend = {
+            fileId: imageId,
+        }
+
+        setDeleteCheck({ state: true, id: id });
+
+        fetch(
+            'https://script.google.com/macros/s/AKfycbx1ugXthrEUjcI4x2OcdgE0ln3cSvtEhP4jLHWAVKW3Ic63xIsKBZKauC76SbZNBrDa/exec',
+            {
+                method: 'POST',
+                body: JSON.stringify(dataSend),
+            }
+        )
+            .then((res) => res.json())
+            .then(async () => {
+                const del = await deleteWorkshopCourse(id);
+                if (del) {
+                    Swal.fire({
+                        title: 'Image Deleted Successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'Close',
+                    })
+                    setDeleteCheck({ state: false, id: "" });
+                    setDeleteId(id);
+                }
+            })
+            .catch((err) => console.log(err))
+    }
 
     return (
         <>
@@ -69,20 +132,7 @@ const WorkshopForm = () => {
                     <h1>Workshop Course Table Data</h1>
                     <form onSubmit={handleSubmit} className="row g-5 mt-5">
                         <div className="col-md-6 mb-5">
-                            <label htmlFor='workshopImage' className="form-label w-100">
-                                <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
-                                    {createObjectURL === "" ?
-                                        <>
-                                            <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
-                                            <h3>Click To Add Course Image</h3>
-                                        </>
-                                        :
-                                        <img style={{ width: "100%", height: "100%", display: 'block' }} src={createObjectURL} alt="upload_Image" />
-                                    }
-                                </div>
-                            </label>
-                            <input hidden required type="file" className="form-control" id="workshopImage" name="workshopImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
-                        </div>
+                            <ImageUpload imageFunc={handleCourse} imageState={imageState} formName={"workshopPage"} />                        </div>
                         <div className='col-md-6'>
                             <div className="mb-5">
                                 <select onChange={handleSelect} className="form-select required" aria-label="Default select example" required>
@@ -93,30 +143,30 @@ const WorkshopForm = () => {
                             </div>
                             <div className="mb-5">
                                 <label className="form-label required">Course Title</label>
-                                <input required type="text" className="form-control" id="courseTitle" name='courseTitle' value={courseTitle} onChange={handleFormDataChange} />
+                                <input required type="text" className="form-control" id="title" name='title' value={title} onChange={handleFormDataChange} />
                             </div>
                             <div className="mb-5">
                                 <label className="form-label required">Course Data</label>
-                                <textarea required className="form-control" rows={7} id="courseContent" name='courseContent' value={courseContent} onChange={handleFormDataChange}></textarea>
+                                <textarea required className="form-control" rows={7} id="data" name='data' value={data} onChange={handleFormDataChange}></textarea>
                             </div>
                             <div className="mb-5">
                                 <label className="form-label required">Days for Course Completion</label>
-                                <input required type="number" className="form-control" id="courseDay" name='courseDay' value={courseDay} onChange={handleFormDataChange} />
+                                <input required type="number" className="form-control" id="days" name='days' value={days} onChange={handleFormDataChange} />
                             </div>
                             <div className="mb-5">
                                 <label className="form-label required">Date/Year</label>
-                                <input required type="text" className="form-control" id="date" name='date' value={date} onChange={handleFormDataChange} />
+                                <input required type="date" className="form-control" id="dateYear" name='dateYear' value={dateYear} onChange={handleFormDataChange} />
                             </div>
                             <button type="submit" className="btn btn-primary">Submit</button>
                         </div>
                     </form>
                     <div className='my-10'>
                         <h1>Slider</h1>
-                        <Slider imageFunc={handleImageFunc} withForm={false} pageValue='workshop' sliderNum={1} />
+                        <Slider sliderName={"workshopSlider"} />
                     </div>
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data">
-                    <h1>Press Data</h1>
+                    <h1>Course Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
                             <thead>
@@ -132,39 +182,38 @@ const WorkshopForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className='fs-5 border-bottom border-gray-500'>
-                                    <td>1</td>
-                                    <td><img style={{ width: "80px", height: "50px", display: 'block' }} src="" alt="Team_Image" /></td>
-                                    <td>Mark</td>
-                                    <td>Core</td>
-                                    <td>Intern</td>
-                                    <td>Intern</td>
-                                    <td>Intern</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
+                                {teamsData && teamsData.length > 1 ?
+                                    teamsData.map((val, index) =>
+                                        <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
+                                            <td>{index + 1}</td>
+                                            <td><img style={{ width: "80px", height: "50px", display: 'block' }} src={val.imgURL ? `https://drive.google.com/uc?export=view&id=${val.imgURL.substring(32, 65)}` : ""} alt="Team_Image" /></td>
+                                            <td>{val.course}</td>
+                                            <td>{val.title}</td>
+                                            <td>{val.data}</td>
+                                            <td>{val.days}</td>
+                                            <td>{val.dateYear}</td>
+                                            <td>
+                                                {deleteCheck.state && deleteCheck.id === val._id ?
+                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                        <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
+                                                        Deleting...
+                                                    </button>
+                                                    :
+                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleTeamDelete(val._id, val.imgId)}>Delete</button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    )
+                                    :
+                                    <tr>
+                                        <td colSpan={8}>No Data</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
-                    <h1>Slider 1 (Above Projects)</h1>
-                    {/* <div className='d-flex flex-row flex-wrap justify-content-start'>
-                        {createObjectURLArray.map((val, index) =>
-                            <img style={{ width: "80px", height: "50px", display: 'block' }} src={val} key={index} alt="upload_Image" />
-                        )}
-                    </div> */}
+                    <h1>Slider 1</h1>
+                    <SlideShow slideType={"workshopSlider"} />
                 </Tab>
             </Tabs>
         </>

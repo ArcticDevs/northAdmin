@@ -1,22 +1,24 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, FC } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
+import Swal from 'sweetalert2'
+import { postStayTestimonial, getStayTestimonials, deleteStayTestimonial } from '../../ApiCalls/StayApiCalls';
 
 const PropertyForm = () => {
     const intl = useIntl()
 
     const initialState = {
         name: "",
-        testimonialContent: "",
+        content: "",
         designation: "",
     }
 
     const [formData, setFormData] = useState(initialState)
 
-    const { name, testimonialContent, designation } = formData;
+    const { name, content, designation } = formData;
 
     const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,8 +27,45 @@ const PropertyForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(formData)
+        // const StayProperty = {
+        //     StayProperty: formData,
+        // }
+        postStayTestimonial(formData)
         setFormData(initialState)
     };
+
+    const [testimonialData, setTestimonialData] = useState([]);
+    const [deleteId, setDeleteId] = useState()
+    const [deleteCheck, setDeleteCheck] = useState({ state: false, id: "" })
+
+    useEffect(() => {
+        const getData = async () => {
+            const data = await getStayTestimonials();
+            if (data)
+                setTestimonialData(data);
+        }
+        getData();
+    }, [deleteId])
+
+    const handleDelete = async (id) => {
+        setDeleteCheck({ state: true, id: id });
+        const del = await deleteStayTestimonial(id)
+        if (del) {
+            Swal.fire({
+                title: 'Testimonial Deleted Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setDeleteId(id);
+        }
+        else {
+            Swal.fire({
+                title: 'Error Occured , please try again',
+                icon: 'error',
+                confirmButtonText: 'Close',
+            })
+        }
+    }
 
     return (
         <>
@@ -46,7 +85,7 @@ const PropertyForm = () => {
                         </div>
                         <div className="mb-5">
                             <label className="form-label required">Testimonial Content</label>
-                            <textarea required className="form-control" rows={7} name='testimonialContent' id='testimonialContent' value={testimonialContent} onChange={handleFormDataChange}></textarea>
+                            <textarea required className="form-control" rows={7} name='content' id='content' value={content} onChange={handleFormDataChange}></textarea>
                         </div>
                         <div className="mb-5">
                             <label className="form-label required">Author Designation</label>
@@ -69,24 +108,25 @@ const PropertyForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className='fs-5 border-bottom border-gray-500'>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
+                                {testimonialData && testimonialData.length < 1 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
+                                    testimonialData.map((val, index) =>
+                                        <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
+                                            <td>{index + 1}</td>
+                                            <td>{val.name}</td>
+                                            <td>{val.content}</td>
+                                            <td>{val.designation}</td>
+                                            <td>
+                                                {deleteCheck.state && deleteCheck.id === val._id ?
+                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                        <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
+                                                        Deleting...
+                                                    </button>
+                                                    :
+                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val._id)}>Delete</button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    )}
                             </tbody>
                         </table>
                     </div>

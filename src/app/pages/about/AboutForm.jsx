@@ -6,33 +6,22 @@ import Slider from '../Slider'
 import { KTSVG } from "../../../_metronic/helpers"
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
-import { getImages, deleteImages } from '../../ApiCalls/SliderApiCalls';
 import { postTeamsData, getTeamsData, deleteTeamData } from '../../ApiCalls/AboutTeamsDataApiCalls'
 import Swal from 'sweetalert2'
+import ImageUpload from '../ImageUpload'
+import SlideShow from '../SlideShow'
 
 const AboutForm = () => {
     const intl = useIntl()
 
-    const [sliderArray_1, setSliderArray_1] = useState([]);
-    const [sliderArray_2, setSliderArray_2] = useState([]);
-    const [deleteId, setDeleteId] = useState()
-
-    const [image, setImage] = useState("");
-    const [createObjectURL, setCreateObjectURL] = useState("");
-
-    const handleImage = (event) => {
-        if (event.target.files && event.target.files[0]) {
-            const i = event.target.files[0];
-            setImage(i);
-            setCreateObjectURL(URL.createObjectURL(i));
-        }
-    };
+    const [imageState, setImageState] = useState(false);
 
     const [checkboxValue, setCheckboxValue] = useState(false);
 
     const initialState = {
-        defaultTeamImage: checkboxValue,
-        teamImage: image,
+        default: checkboxValue,
+        imgId: "",
+        imgURL: "",
         category: "",
         name: "",
         job: "",
@@ -51,50 +40,76 @@ const AboutForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleTeamImage = (image) => {
+        console.log(image)
+        if (image.status) {
+            formData.imgId = image.data.id;
+            formData.imgURL = image.data.url;
+            console.log(formData)
+            const teamsData = {
+                teamsData: formData
+            }
+            postTeamsData(teamsData);
+            setImageState(false);
+            setFormData(initialState);
+        }
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        formData.defaultTeamImage = checkboxValue;
-        console.log(formData)
-        postTeamsData(formData);
-        setFormData(initialState)
+        setImageState(true)
+        formData.default = checkboxValue;
+        // console.log(formData)
+        // if(!imageState)
+        // {
+        //     postTeamsData(formData);
+        //     setFormData(initialState)
+        // }
     };
 
-    useEffect(() => {
-        const getSliderImages = async () => {
-            const data = await getImages("abovevision");
-            if (data)
-                setSliderArray_1(data[data.length - 1].sliderImages);
-        }
-        getSliderImages();
-    }, [deleteId])
+    const [teamsData, setTeamsData] = useState([])
+    const [deleteCheck, setDeleteCheck] = useState({ state: false, id: "" })
+    const [deleteId, setDeleteId] = useState("")
 
     useEffect(() => {
-        const getSliderImages = async () => {
-            const data = await getImages("aboveRecog");
-            if (data)
-                setSliderArray_2(data[data.length - 1].sliderImages);
+        const getTeamsDataFunc = async () => {
+            const data = await getTeamsData();
+            console.log(data)
+            if (!data.error) {
+                setTeamsData(data);
+            }
         }
-        getSliderImages();
+        getTeamsDataFunc();
     }, [deleteId])
 
+    const handleTeamDelete = async (id, imageId) => {
+        let dataSend = {
+            fileId: imageId,
+        }
 
-    const handleDelete = async (id) => {
-        const del = await deleteImages(id)
-        if (del) {
-            Swal.fire({
-                title: 'Testimonial Deleted Successfully!',
-                icon: 'success',
-                confirmButtonText: 'Close',
+        setDeleteCheck({ state: true, id: id });
+
+        fetch(
+            'https://script.google.com/macros/s/AKfycbx1ugXthrEUjcI4x2OcdgE0ln3cSvtEhP4jLHWAVKW3Ic63xIsKBZKauC76SbZNBrDa/exec',
+            {
+                method: 'POST',
+                body: JSON.stringify(dataSend),
+            }
+        )
+            .then((res) => res.json())
+            .then(async () => {
+                const del = await deleteTeamData(id);
+                if (del) {
+                    Swal.fire({
+                        title: 'Image Deleted Successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'Close',
+                    })
+                    setDeleteCheck({ state: false, id: "" });
+                    setDeleteId(id);
+                }
             })
-            setDeleteId(id);
-        }
-        else {
-            Swal.fire({
-                title: 'Error Occured , please try again',
-                icon: 'error',
-                confirmButtonText: 'Close',
-            })
-        }
+            .catch((err) => console.log(err))
     }
 
     return (
@@ -109,28 +124,16 @@ const AboutForm = () => {
                 <Tab eventKey="FormTab" title="Form">
                     <div className='mb-10'>
                         <h1>Slider 1 (Above Vision Section)</h1>
-                        <Slider pageValue='aboutpage' sliderNum={"aboutvision"} withForm={false} />
+                        <Slider pageValue='aboutpage' sliderName={"aboveVision"} withForm={false} />
                     </div>
                     <div className='mb-10'>
                         <h1>Slider 2 (After Recognitions Table)</h1>
-                        <Slider pageValue='aboutpage' sliderNum={"aboutrecog"} withForm={false} />
+                        <Slider pageValue='aboutpage' sliderName={"afterRecog"} withForm={false} />
                     </div>
                     <h1>Teams Data</h1>
                     <form className='row g-5' onSubmit={handleSubmit}>
                         <div className="col-md-6">
-                            <label htmlFor='teamImage' className="form-label" style={{ width: '100%' }}>
-                                <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
-                                    {createObjectURL === "" ?
-                                        <>
-                                            <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
-                                            <h3>Click To Add Image</h3>
-                                        </>
-                                        :
-                                        <img style={{ width: "100%", height: "100%", display: 'block' }} src={createObjectURL} alt="upload_Image" />
-                                    }
-                                </div>
-                            </label>
-                            <input hidden required type="file" className="form-control" id="teamImage" name="teamImage" onChange={handleImage} accept=".png, .jpg, .jpeg" />
+                            <ImageUpload imageFunc={handleTeamImage} imageState={imageState} formName={"aboutPage"} />
                         </div>
                         <div className='col-md-6'>
                             <div className="mb-5">
@@ -166,29 +169,13 @@ const AboutForm = () => {
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data">
                     <h1>Slider 1 (Above Vision Section)</h1>
-                    <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'>
-                        {sliderArray_1 && sliderArray_1.length < 1 ? <h3>No Data</h3> :
-                            sliderArray_1.map((val, index) =>
-                                <div key={val.id}>
-                                    <img style={{ width: "80px", height: "50px", display: 'block' }} src={`https://drive.google.com/uc?export=view&id=${val.url.substring(32, 65)}`} alt="upload_Image" />
-                                    <div className='my-5'>
-                                        <button className='btn btn-icon btn-sm btn-danger p-0' onClick={() => handleDelete(val.id)}><i className='bi bi-trash-fill'></i></button>
-                                    </div>
-                                </div>
-                            )
-                        }
-                    </div>
+                    {/* <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'> */}
+                    <SlideShow slideType={"aboveVision"} />
+                    {/* </div> */}
                     <h1>Slider 2 (After Recognitions Table)</h1>
-                    {sliderArray_2 && sliderArray_2.length < 1 ? <h3>No Data</h3> :
-                        sliderArray_2.map((val, index) =>
-                            <div key={val.id}>
-                                <img style={{ width: "80px", height: "50px", display: 'block' }} src={`https://drive.google.com/uc?export=view&id=${val.url.substring(32, 65)}`} alt="upload_Image" />
-                                <div className='my-5'>
-                                    <button className='btn btn-icon btn-sm btn-danger p-0' onClick={() => handleDelete(val.id)}><i className='bi bi-trash-fill'></i></button>
-                                </div>
-                            </div>
-                        )
-                    }
+                    {/* <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'> */}
+                    <SlideShow slideType={"afterRecog"} />
+                    {/* </div> */}
                     <h1>Teams Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
@@ -204,28 +191,32 @@ const AboutForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className='fs-5 border-bottom border-gray-500'>
-                                    <td>1</td>
-                                    <td><img style={{ width: "80px", height: "50px", display: 'block' }} src="" alt="Team_Image" /></td>
-                                    <td>Mark</td>
-                                    <td>Core</td>
-                                    <td>Intern</td>
-                                    <td>GR</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                    <td>
-                                        <button type="button" className="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
+                                {teamsData && teamsData.length > 1 ?
+                                    teamsData.map((val, index) =>
+                                        <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
+                                            <td>{index + 1}</td>
+                                            <td><img style={{ width: "80px", height: "50px", display: 'block' }} src={val.imgURL ? `https://drive.google.com/uc?export=view&id=${val.imgURL.substring(32, 65)}` : ""} alt="Team_Image" /></td>
+                                            <td>{val.name}</td>
+                                            <td>{val.category}</td>
+                                            <td>{val.job}</td>
+                                            <td>{val.location}</td>
+                                            <td>
+                                                {deleteCheck.state && deleteCheck.id === val._id ?
+                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                        <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
+                                                        Deleting...
+                                                    </button>
+                                                    :
+                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleTeamDelete(val._id, val.imgId)}>Delete</button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    )
+                                    :
+                                    <tr>
+                                        <td colSpan={7}>No Data</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>

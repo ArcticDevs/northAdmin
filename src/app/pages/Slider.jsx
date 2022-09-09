@@ -6,7 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { postImages } from '../ApiCalls/SliderApiCalls';
 
-const Slider = ({ imageFunc, withForm, sliderNum, pageValue }) => {
+const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
 
   const [pdfFiles, setPdfFiles] = useState([])
   // const [showDropArea, setShowDropArea] = useState(true)
@@ -122,7 +122,7 @@ const Slider = ({ imageFunc, withForm, sliderNum, pageValue }) => {
         uploadedFileObj.url = data.url
         uploadedFileObj.id = data.id
 
-        setUploadedFiles([...uploadedFiles,uploadedFileObj])
+        setUploadedFiles([...uploadedFiles, uploadedFileObj])
       })
       .catch((err) => {
         console.log(err)
@@ -149,7 +149,8 @@ const Slider = ({ imageFunc, withForm, sliderNum, pageValue }) => {
   const handleSliderSubmit = (e) => {
     e.preventDefault();
     const imageFiles = {
-      sliderImages: uploadedFiles.map(selectFewerProps)
+      sliderImages: uploadedFiles.map(selectFewerProps),
+      pageSection : sliderName
     }
     console.log(imageFiles)
     postImages(imageFiles)
@@ -163,7 +164,7 @@ const Slider = ({ imageFunc, withForm, sliderNum, pageValue }) => {
   return (
     <>
       <form className='row my-5' onSubmit={handleSliderSubmit}>
-        <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`sliderImage${sliderNum}`} className="form-label col-md-6">
+        <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`sliderImage${sliderName}`} className="form-label col-md-6">
           <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
             {createObjectURL === "" ?
               <>
@@ -179,7 +180,7 @@ const Slider = ({ imageFunc, withForm, sliderNum, pageValue }) => {
             }
           </div>
         </label>
-        <input {...getInputProps()} hidden required type="file" className="form-control my-3" id={`sliderImage${sliderNum}`} name={`sliderImage${sliderNum}`} accept=".png, .jpg, .jpeg" />
+        <input {...getInputProps()} hidden required type="file" className="form-control my-3" id={`sliderImage${sliderName}`} name={`sliderImage${sliderName}`} accept=".png, .jpg, .jpeg" />
         <div className='col-md-6 d-flex flex-column justify-content-between'>
           <div className='d-flex flex-row flex-wrap justify-content-start'>
             {createObjectURLArray.map((val, index) =>

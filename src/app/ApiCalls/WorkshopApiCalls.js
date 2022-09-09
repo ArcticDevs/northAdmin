@@ -2,15 +2,15 @@ import axios from "axios";
 import { url } from './ApiUrl'
 import Swal from 'sweetalert2'
 
-const teamsApiUrl = `${url}/data/aboutpage/teamsdata`
+const workshopApiUrl = `${url}/data/workshop`
 
-export const postTeamsData = async (teamsData) => {
+export const postWorkshopCourse = async (Workshop) => {
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
     // const body = { images }
     // console.log(body)
     try {
-        const response = await axios.post(`${teamsApiUrl}/add/${adminId}`, { teamsData })
+        const response = await axios.post(`${workshopApiUrl}/add/${adminId}`, { Workshop })
         console.log(response)
         if (response.status === 201) {
             Swal.fire({
@@ -33,9 +33,9 @@ export const postTeamsData = async (teamsData) => {
 
 }
 
-export const getTeamsData = async () => {
+export const getWorkshopCourses = async () => {
     try {
-        const response = await axios.get(`${teamsApiUrl}/all`)
+        const response = await axios.get(`${workshopApiUrl}/all`)
         console.log(response)
         return response.data.data;
     }
@@ -44,9 +44,9 @@ export const getTeamsData = async () => {
     }
 }
 
-export const deleteTeamData = async (id) => {
+export const deleteWorkshopCourse = async (id) => {
     try {
-        const response = await axios.delete(`${teamsApiUrl}/delete/${id}`)
+        const response = await axios.delete(`${workshopApiUrl}/delete/${id}`)
         console.log(response)
         return response.data.success;
     }

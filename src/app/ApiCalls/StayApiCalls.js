@@ -1,14 +1,14 @@
 import axios from "axios";
 import { url } from './ApiUrl'
 
-const homeApiURL = `${url}/data/homepage/testimonials`
+const stayApiURL = `${url}/data/stay/property`
 
-export const postTestimonial = async (category, name, content, designation) => {
+export const postStayTestimonial = async (StayProperty) => {
     // console.log(formData)
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
     try {
-        const response = await axios.post(`${homeApiURL}/add/${adminId}`, { category, name, content, designation })
+        const response = await axios.post(`${stayApiURL}/add/${adminId}`, { StayProperty })
         console.log(response)
         return response.data;
     } catch (error) {
@@ -17,9 +17,9 @@ export const postTestimonial = async (category, name, content, designation) => {
 
 }
 
-export const getHomeTestimonials = async () => {
+export const getStayTestimonials = async () => {
     try {
-        const response = await axios.get(`${homeApiURL}/all`);
+        const response = await axios.get(`${stayApiURL}/all`);
         console.log(response)
         return response.data.data;
     } catch (error) {
@@ -27,9 +27,9 @@ export const getHomeTestimonials = async () => {
     }
 }
 
-export const deleteTestimonial = async (testimonialId) => {
+export const deleteStayTestimonial = async (testimonialId) => {
     try {
-        const res = await axios.delete(`${homeApiURL}/delete/${testimonialId}`)
+        const res = await axios.delete(`${stayApiURL}/delete/${testimonialId}`)
         console.log(res.data)
         return res.data.success;
     } catch (error) {
