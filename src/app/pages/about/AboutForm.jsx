@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
 import Slider from '../Slider'
-import { KTSVG } from "../../../_metronic/helpers"
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 import { postTeamsData, getTeamsData, deleteTeamData } from '../../ApiCalls/AboutTeamsDataApiCalls'
@@ -15,6 +14,7 @@ const AboutForm = () => {
     const intl = useIntl()
 
     const [imageState, setImageState] = useState(false);
+    const [trigger, setTrigger] = useState(false)
 
     const [checkboxValue, setCheckboxValue] = useState(false);
 
@@ -46,10 +46,7 @@ const AboutForm = () => {
             formData.imgId = image.data.id;
             formData.imgURL = image.data.url;
             console.log(formData)
-            const teamsData = {
-                teamsData: formData
-            }
-            postTeamsData(teamsData);
+            postTeamsData(formData);
             setImageState(false);
             setFormData(initialState);
         }
@@ -59,12 +56,6 @@ const AboutForm = () => {
         e.preventDefault();
         setImageState(true)
         formData.default = checkboxValue;
-        // console.log(formData)
-        // if(!imageState)
-        // {
-        //     postTeamsData(formData);
-        //     setFormData(initialState)
-        // }
     };
 
     const [teamsData, setTeamsData] = useState([])
@@ -80,7 +71,7 @@ const AboutForm = () => {
             }
         }
         getTeamsDataFunc();
-    }, [deleteId])
+    }, [deleteId,trigger])
 
     const handleTeamDelete = async (id, imageId) => {
         let dataSend = {
@@ -137,7 +128,7 @@ const AboutForm = () => {
                         </div>
                         <div className='col-md-6'>
                             <div className="mb-5">
-                                <input required className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} />
+                                <input className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} />
                                 <label className="form-check-label mx-3 required">
                                     Is it a default Team-Image?
                                 </label>
@@ -167,15 +158,11 @@ const AboutForm = () => {
                         </div>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data">
+                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
                     <h1>Slider 1 (Above Vision Section)</h1>
-                    {/* <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'> */}
                     <SlideShow slideType={"aboveVision"} />
-                    {/* </div> */}
                     <h1>Slider 2 (After Recognitions Table)</h1>
-                    {/* <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'> */}
                     <SlideShow slideType={"afterRecog"} />
-                    {/* </div> */}
                     <h1>Teams Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">

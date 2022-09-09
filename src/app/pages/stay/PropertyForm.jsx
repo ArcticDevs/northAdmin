@@ -17,6 +17,7 @@ const PropertyForm = () => {
     }
 
     const [formData, setFormData] = useState(initialState)
+    const [trigger, setTrigger] = useState(false)
 
     const { name, content, designation } = formData;
 
@@ -45,7 +46,7 @@ const PropertyForm = () => {
                 setTestimonialData(data);
         }
         getData();
-    }, [deleteId])
+    }, [deleteId, trigger])
 
     const handleDelete = async (id) => {
         setDeleteCheck({ state: true, id: id });
@@ -94,7 +95,7 @@ const PropertyForm = () => {
                         <button type="submit" className="btn btn-primary">Submit</button>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data">
+                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
                     <h1>Testimonials Table</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">

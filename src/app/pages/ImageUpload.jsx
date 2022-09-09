@@ -114,6 +114,8 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
         console.log(uploadedFile)
         if (!uploadLoading) {
             imageFunc({ data: uploadedFile, status: true });
+            setUploadedFile({})
+            setCreateObjectURL("")
         }
 
     }, [uploadLoading])

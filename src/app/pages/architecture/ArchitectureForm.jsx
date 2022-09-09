@@ -16,6 +16,7 @@ const ArchitectureForm = () => {
     const intl = useIntl()
 
     const [imageState, setImageState] = useState(false);
+    const [trigger, setTrigger] = useState(false)
 
     const initialStateResearch = {
         sliderImages: [],
@@ -93,7 +94,7 @@ const ArchitectureForm = () => {
             }
         }
         getResearchDataFunc();
-    }, [deleteId])
+    }, [deleteId,trigger])
 
     const [projectData, setProjectData] = useState([])
     const [deleteProjectCheck, setDeleteProjectCheck] = useState({ state: false, id: "" })
@@ -108,7 +109,7 @@ const ArchitectureForm = () => {
             }
         }
         getProjectDataFunc();
-    }, [deleteProjectId])
+    }, [deleteProjectId,trigger])
 
     const handleProjectDelete = async (id, imageId) => {
         let dataSend = {
@@ -255,7 +256,7 @@ const ArchitectureForm = () => {
                         <Slider pageValue='archPage' withForm={false} sliderName={"clientCollab"} />
                     </div>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data">
+                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
                     <h1>Research Publications</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">

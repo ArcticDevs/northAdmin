@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState, useEffect, FC } from 'react'
+import { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
 import { postTestimonial, getHomeTestimonials, deleteTestimonial } from '../../ApiCalls/TestimonialApiCalls';
@@ -7,7 +7,7 @@ import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 import Swal from 'sweetalert2'
 
-const HomeForm: FC = () => {
+const HomeForm = () => {
     const intl = useIntl()
 
     const initialState = {
@@ -17,42 +17,43 @@ const HomeForm: FC = () => {
         designation: "",
     }
 
+    const [trigger, setTrigger] = useState(false)
+
     const [deleteId, setDeleteId] = useState()
 
     const [formData, setFormData] = useState(initialState)
 
     const { name, content, designation } = formData;
 
-    const handleSelect = (e: any) => {
+    const handleSelect = (e) => {
         setFormData({ ...formData, category: e.target.value })
     }
 
-    const handleFormDataChange = (e: any) => {
+    const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         console.log(formData)
         postTestimonial(formData)
         setFormData(initialState)
     };
 
-    const [testimonialData, setTestimonialData] = useState<any>([]);
+    const [testimonialData, setTestimonialData] = useState([]);
 
     useEffect(() => {
         const getData = async () => {
             const data = await getHomeTestimonials();
-            if(data)
+            if (data)
                 setTestimonialData(data);
         }
         getData();
-    }, [deleteId])
+    }, [deleteId,trigger])
 
-    const handleDelete = async (id: any) => {
+    const handleDelete = async (id) => {
         const del = await deleteTestimonial(id)
-        if(del)
-        {
+        if (del) {
             Swal.fire({
                 title: 'Testimonial Deleted Successfully!',
                 icon: 'success',
@@ -105,7 +106,7 @@ const HomeForm: FC = () => {
                         <button type="submit" className="btn btn-primary">Submit</button>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data">
+                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
                     <h1>Testimonials Table</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
@@ -120,11 +121,11 @@ const HomeForm: FC = () => {
                             </thead>
                             <tbody>
                                 {testimonialData && testimonialData.length < 1 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
-                                    testimonialData.map((val: any, index: number) =>
+                                    testimonialData.map((val, index) =>
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>
                                             <td>{val.name}</td>
-                                            <td>{val.content}</td>
+                                            <td style={{whiteSpace: 'pre-line'}}>{val.content}</td>
                                             <td>{val.designation}</td>
                                             <td>
                                                 <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val._id)}>Delete</button>
@@ -140,4 +141,4 @@ const HomeForm: FC = () => {
     )
 }
 
-export { HomeForm }
+export default HomeForm

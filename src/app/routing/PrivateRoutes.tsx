@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { FallbackView } from '../../_metronic/partials'
-import { HomeForm } from '../pages/home/HomeForm'
+import HomeForm from '../pages/home/HomeForm.jsx'
 import AboutForm from '../pages/about/AboutForm.jsx'
 import ArchitectureForm from '../pages/architecture/ArchitectureForm.jsx'
 import PropertyForm from '../pages/stay/PropertyForm.jsx'

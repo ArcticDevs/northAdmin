@@ -12,6 +12,7 @@ const PressForm = () => {
     const intl = useIntl()
 
     const [checkboxValue, setCheckboxValue] = useState(false);
+    const [trigger, setTrigger] = useState(false)
 
     const initialState = {
         videoLink: checkboxValue,
@@ -71,7 +72,7 @@ const PressForm = () => {
             }
         }
         getTeamsDataFunc();
-    }, [deleteId])
+    }, [deleteId,trigger])
 
     const handlePressDelete = async (id, imageId) => {
         let dataSend = {
@@ -149,7 +150,7 @@ const PressForm = () => {
                         </div>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data">
+                <Tab eventKey="TableTab" title="View Data" onEnter={()=> setTrigger(!trigger)}>
                     <h1>Press Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">

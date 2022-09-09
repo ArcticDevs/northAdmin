@@ -12,20 +12,14 @@ import { postExperienceTestimonial, getExperienceTestimonials, deleteExperienceT
 const ExperienceForm = () => {
     const intl = useIntl()
 
-    const [imageArray, setImageArray] = useState([]);
-    console.log(imageArray)
-
-    const handleImageFunc = (n) => {
-        setImageArray(n)
-    }
-
     const initialState = {
         name: "",
         content: "",
         designation: "",
     }
 
-    const [formData, setFormData] = useState(initialState)
+    const [formData, setFormData] = useState(initialState);
+    const [trigger, setTrigger] = useState(false)
 
     const { name, content, designation } = formData;
 
@@ -54,7 +48,7 @@ const ExperienceForm = () => {
                 setTestimonialData(data);
         }
         getData();
-    }, [deleteId])
+    }, [deleteId, trigger])
 
     const handleDelete = async (id) => {
         setDeleteCheck({ state: true, id: id });
@@ -107,7 +101,7 @@ const ExperienceForm = () => {
                         <button type="submit" className="btn btn-primary">Submit</button>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data">
+                <Tab eventKey="TableTab" title="View Data" onEnter={() => setTrigger(!trigger)}>
                     <h1>Slider 1</h1>
                     <SlideShow slideType={"experienceSlider"} />
                     <h1>Testimonials Table</h1>

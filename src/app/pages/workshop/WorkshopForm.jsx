@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
 import Slider from '../Slider'
-import { KTSVG } from '../../../_metronic/helpers'
 import SlideShow from '../SlideShow'
 import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
@@ -13,13 +12,6 @@ import { postWorkshopCourse, getWorkshopCourses, deleteWorkshopCourse } from '..
 
 const WorkshopForm = () => {
     const intl = useIntl()
-
-    const [imageArray, setImageArray] = useState([]);
-    console.log(imageArray)
-
-    const handleImageFunc = (n) => {
-        setImageArray(n)
-    }
 
     const initialState = {
         imgId: "",
@@ -32,6 +24,8 @@ const WorkshopForm = () => {
     }
 
     const [formData, setFormData] = useState(initialState)
+
+    const [trigger, setTrigger] = useState(false)
 
     const { title, data, dateYear, days } = formData;
 
@@ -87,7 +81,7 @@ const WorkshopForm = () => {
             }
         }
         getTeamsDataFunc();
-    }, [deleteId])
+    }, [deleteId,trigger])
 
     const handleTeamDelete = async (id, imageId) => {
         let dataSend = {
@@ -165,7 +159,7 @@ const WorkshopForm = () => {
                         <Slider sliderName={"workshopSlider"} />
                     </div>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data">
+                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
                     <h1>Course Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">

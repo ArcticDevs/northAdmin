@@ -13,6 +13,7 @@ const LibraryForm = () => {
     const intl = useIntl()
 
     const [checkboxValue, setCheckboxValue] = useState(false);
+    const [trigger, setTrigger] = useState(false)
 
     const initialState = {
         imgId: "",
@@ -22,7 +23,7 @@ const LibraryForm = () => {
         dateYear: "",
         pdfFileURL: "",
         link: "",
-        isPdf: checkboxValue,
+        hasPDF: checkboxValue,
     }
 
     const [formData, setFormData] = useState(initialState)
@@ -71,7 +72,7 @@ const LibraryForm = () => {
         e.preventDefault();
         console.log(formData)
         setImageState(true);
-        formData.isPdf = checkboxValue;
+        formData.hasPDF = checkboxValue;
     };
 
     const [bookData, setBookData] = useState([])
@@ -87,7 +88,7 @@ const LibraryForm = () => {
             }
         }
         getLibraryFunc();
-    }, [deleteId])
+    }, [deleteId,trigger])
 
     const handleBookDelete = async (id, imageId) => {
         let dataSend = {
@@ -164,7 +165,7 @@ const LibraryForm = () => {
                         </div>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data">
+                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
                     <h1>Books Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
