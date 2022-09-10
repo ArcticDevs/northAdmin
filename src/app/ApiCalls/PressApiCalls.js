@@ -10,7 +10,7 @@ export const postPressData = async (Press) => {
     try {
         const response = await axios.post(`${pressApiUrl}/add/${adminId}`, { Press })
         console.log(response)
-        return response.data;
+        return response.success;
     } catch (error) {
         console.error(error)
     }

@@ -44,14 +44,14 @@ const ArchitectureForm = () => {
         e.preventDefault();
         setImageState(true)
     };
-
+    
     const handleImageFunc = (images) => {
-        formDataResearch.sliderImages = images;
-        // const research = {
-        //     research: formDataResearch
-        // }
-        postResearchData(formDataResearch)
-        setFormDataResearch(initialStateResearch)
+        if (images.status) {
+            formDataResearch.sliderImages = images;
+            postResearchData(formDataResearch)
+            setImageState(false)
+            setFormDataResearch(initialStateResearch)
+        }
     }
 
     const handleFormDataProjectChange = (e) => {
@@ -69,16 +69,15 @@ const ArchitectureForm = () => {
         if (imageVal.status) {
             console.log(formDataProject)
             const project = {
-                project: {
-                    imgId: imageVal.data.id,
-                    imgURL: imageVal.data.url,
-                    title: projectTitle,
-                    content: projectContent
-                }
+                imgId: imageVal.data.id,
+                imgURL: imageVal.data.url,
+                title: projectTitle,
+                content: projectContent
             }
             postProjectData(project)
+            setImageState(false)
+            setFormDataProject(initialStateProject)
         }
-        setFormDataProject(initialStateProject)
     }
 
     const [researchData, setResearchData] = useState([])
@@ -94,7 +93,7 @@ const ArchitectureForm = () => {
             }
         }
         getResearchDataFunc();
-    }, [deleteId,trigger])
+    }, [deleteId, trigger])
 
     const [projectData, setProjectData] = useState([])
     const [deleteProjectCheck, setDeleteProjectCheck] = useState({ state: false, id: "" })
@@ -109,7 +108,7 @@ const ArchitectureForm = () => {
             }
         }
         getProjectDataFunc();
-    }, [deleteProjectId,trigger])
+    }, [deleteProjectId, trigger])
 
     const handleProjectDelete = async (id, imageId) => {
         let dataSend = {
@@ -130,7 +129,7 @@ const ArchitectureForm = () => {
                 const del = await deleteProjectData(id);
                 if (del) {
                     Swal.fire({
-                        title: 'Image Deleted Successfully!',
+                        title: 'Project Deleted Successfully!',
                         icon: 'success',
                         confirmButtonText: 'Close',
                     })
@@ -138,7 +137,14 @@ const ArchitectureForm = () => {
                     setDeleteProjectId(id);
                 }
             })
-            .catch((err) => console.log(err))
+            .catch((err) => {
+                Swal.fire({
+                    title: 'Error Occured , please try again',
+                    icon: 'error',
+                    confirmButtonText: 'Close',
+                })
+                console.log(err)
+            })
     }
 
     const [imageDeleted, setImageDeleted] = useState(false)
@@ -148,7 +154,7 @@ const ArchitectureForm = () => {
         console.log(del)
         if (del) {
             Swal.fire({
-                title: 'Image Deleted!',
+                title: 'Research Deleted!',
                 icon: 'success',
                 confirmButtonText: 'Close',
             })
@@ -224,7 +230,7 @@ const ArchitectureForm = () => {
                                 <label className="form-label required">Link</label>
                                 <input required type="text" className="form-control" id="link" name='link' value={link} onChange={handleFormDataResearchChange} />
                             </div>
-                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <button type="submit" className="btn btn-primary" disabled={imageState}>{imageState ? "Uploading..." : "Submit"}</button>
                         </div>
                     </form>
                     <div className='my-10'>
@@ -237,7 +243,6 @@ const ArchitectureForm = () => {
                             <div className="col-md-6">
                                 <ImageUpload imageFunc={handleProjectImage} imageState={projectImgState} formName={"projectPage"} />
                             </div>
-
                             <div className="col-md-6">
                                 <div className="mb-5">
                                     <label className="form-label required">Title</label>
@@ -247,7 +252,7 @@ const ArchitectureForm = () => {
                                     <label className="form-label required">Content</label>
                                     <textarea required className="form-control" rows={7} name='projectContent' value={projectContent} onChange={handleFormDataProjectChange}></textarea>
                                 </div>
-                                <button type="submit" className="btn btn-primary">Submit</button>
+                                <button type="submit" className="btn btn-primary" disabled={imageState}>{imageState ? "Uploading..." : "Submit"}</button>
                             </div>
                         </form>
                     </div>
@@ -256,7 +261,7 @@ const ArchitectureForm = () => {
                         <Slider pageValue='archPage' withForm={false} sliderName={"clientCollab"} />
                     </div>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
+                <Tab eventKey="TableTab" title="View Data" onEnter={() => setTrigger(!trigger)}>
                     <h1>Research Publications</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
@@ -277,7 +282,7 @@ const ArchitectureForm = () => {
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>
                                             <td className='d-flex flex-row gap-4 justify-content-start' style={{ overflow: 'hidden' }}>
-                                                {val.sliderImages && val.sliderImages.length < 1 ?<KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" /> :
+                                                {val.sliderImages && val.sliderImages.length < 1 ? <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" /> :
                                                     val.sliderImages.map((val) =>
                                                         <img style={{ width: "80px", display: 'block' }} key={val.id} src={val.imgURL ? `https://drive.google.com/uc?export=view&id=${val.imgURL.substring(32, 65)}` : ""} alt="Research_Image" />
                                                     )}
@@ -287,7 +292,7 @@ const ArchitectureForm = () => {
                                             <td>{val.link}</td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
-                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
                                                     </button>
@@ -324,7 +329,7 @@ const ArchitectureForm = () => {
                                             <td>{val.content}</td>
                                             <td>
                                                 {deleteProjectCheck.state && deleteProjectCheck.id === val._id ?
-                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
                                                     </button>

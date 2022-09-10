@@ -19,12 +19,13 @@ const HomeForm = () => {
 
     const [trigger, setTrigger] = useState(false)
     const [upload, setUpload] = useState(false)
+    const [deleteCheck, setDeleteCheck] = useState({ state: false, id: "" })
 
     const [deleteId, setDeleteId] = useState()
 
     const [formData, setFormData] = useState(initialState)
 
-    const { category,name, content, designation } = formData;
+    const { category, name, content, designation } = formData;
 
     const handleSelect = (e) => {
         setFormData({ ...formData, category: e.target.value })
@@ -48,7 +49,7 @@ const HomeForm = () => {
             })
             setUpload(false)
             setFormData(initialState)
-            formData.category = "";
+            // formData.category = "";
         }
     };
 
@@ -64,8 +65,10 @@ const HomeForm = () => {
     }, [deleteId, trigger])
 
     const handleDelete = async (id) => {
+        setDeleteCheck({ state: true, id: id })
         const del = await deleteTestimonial(id)
         if (del) {
+            setDeleteCheck({ state: false, id: "" })
             Swal.fire({
                 title: 'Testimonial Deleted Successfully!',
                 icon: 'success',
@@ -74,6 +77,7 @@ const HomeForm = () => {
             setDeleteId(id);
         }
         else {
+            setDeleteCheck({ state: false, id: "" })
             Swal.fire({
                 title: 'Error Occured , please try again',
                 icon: 'error',
@@ -140,7 +144,14 @@ const HomeForm = () => {
                                             <td style={{ whiteSpace: 'pre-line' }}>{val.content}</td>
                                             <td>{val.designation}</td>
                                             <td>
-                                                <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val._id)}>Delete</button>
+                                                {deleteCheck.state && deleteCheck.id === val._id ?
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
+                                                        <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
+                                                        Deleting...
+                                                    </button>
+                                                    :
+                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val._id)}>Delete</button>
+                                                }
                                             </td>
                                         </tr>
                                     )}

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { url } from './ApiUrl'
-import Swal from 'sweetalert2'
 
 const workshopApiUrl = `${url}/data/workshop`
 const testimonialApiUrl = `${url}/data/stay/property`
@@ -8,30 +7,14 @@ const testimonialApiUrl = `${url}/data/stay/property`
 export const postWorkshopCourse = async (Workshop) => {
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
-    // const body = { images }
-    // console.log(body)
     try {
         const response = await axios.post(`${workshopApiUrl}/add/${adminId}`, { Workshop })
         console.log(response)
-        if (response.status === 201) {
-            Swal.fire({
-                title: 'Data Uploaded Successfully!',
-                icon: 'success',
-                confirmButtonText: 'Close',
-            })
-        } else {
-            Swal.fire({
-                title: 'Error Occured , please try again',
-                icon: 'error',
-                confirmButtonText: 'Close',
-            })
-            return response.data.data;
-        }
+        return response.success;
     }
     catch (error) {
         console.error(error)
     }
-
 }
 
 export const getWorkshopCourses = async () => {
@@ -63,11 +46,10 @@ export const postWorkshopTestimonial = async (Workshop) => {
     try {
         const response = await axios.post(`${testimonialApiUrl}/add/${adminId}/workshop`, { Workshop })
         console.log(response)
-        return response.data;
+        return response.success;
     } catch (error) {
         console.error(error)
     }
-
 }
 
 export const getWorkshopTestimonials = async () => {

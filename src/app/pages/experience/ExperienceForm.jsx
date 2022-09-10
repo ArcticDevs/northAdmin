@@ -20,6 +20,7 @@ const ExperienceForm = () => {
 
     const [formData, setFormData] = useState(initialState);
     const [trigger, setTrigger] = useState(false)
+    const [upload, setUpload] = useState(false)
 
     const { name, content, designation } = formData;
 
@@ -29,12 +30,19 @@ const ExperienceForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setUpload(true)
         console.log(formData)
-        // const Experience = {
-        //     Experience: formData,
-        // }
-        postExperienceTestimonial(formData)
-        setFormData(initialState)
+        const res = postExperienceTestimonial(formData)
+        console.log(res)
+        if (res) {
+            Swal.fire({
+                title: 'Testimonial Added Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setUpload(false)
+            setFormData(initialState)
+        }
     };
 
     const [testimonialData, setTestimonialData] = useState([]);
@@ -98,7 +106,7 @@ const ExperienceForm = () => {
                             <label className="form-label required">Author Designation</label>
                             <input required type="text" className="form-control" value={designation} onChange={handleFormDataChange} id="designation" name='designation' />
                         </div>
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <button type="submit" className="btn btn-primary" disabled={upload}>{upload ? "Uploading..." : "Submit"}</button>
                     </form>
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data" onEnter={() => setTrigger(!trigger)}>
@@ -126,7 +134,7 @@ const ExperienceForm = () => {
                                             <td>{val.designation}</td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
-                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
                                                     </button>

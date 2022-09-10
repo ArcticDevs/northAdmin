@@ -7,6 +7,7 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
 
     const [uploadedFile, setUploadedFile] = useState()
     const [uploadLoading, setUploadLoading] = useState(true)
+    const [uploadStatus, setUploadStatus] = useState(false)
 
     const [image, setImage] = useState("");
     const [createObjectURL, setCreateObjectURL] = useState("");
@@ -54,7 +55,7 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
 
     const handleUpload = () => {
         setUploadLoading(true)
-
+        setUploadStatus(true)
         let uploadedFileObj = {
             url: '',
             id: '',
@@ -86,6 +87,7 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
 
                 setUploadedFile(uploadedFileObj)
                 setUploadLoading(false)
+                setUploadStatus(false)
             })
             .catch((err) => {
                 console.log(err)
@@ -96,6 +98,7 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
                     confirmButtonText: 'Close',
                 })
 
+                setUploadStatus(false)
                 setUploadLoading(false)
                 // setPdfFiles([])
                 setUploadedFile({})
@@ -123,18 +126,19 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
 
     return (
         <>
-            <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`uploadImage${formName}`} className={`form-label w-100 ${isDisabled ? "bg-light" : "bg-transparent"}`}>
+            <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`uploadImage${formName}`} className={`form-label w-100 ${isDisabled || uploadStatus ? "bg-light" : "bg-transparent"}`}>
                 <div className={`d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded ${isDisabled && "bg-secondary"}`} style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                     {createObjectURL === "" ?
                         <>
                             <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
                             {
                                 isDisabled ? <h3 className='text-muted'>Upload Disabled for non-video links</h3> :
-                                    <h3 className='text-center'>
-                                        Click here or Drag & drop to upload the Image file
-                                        <br />
-                                        (limit 5MB)
-                                    </h3>
+                                    uploadStatus ? <h3 className='text-muted'>Uploading File...</h3> :
+                                        <h3 className='text-center'>
+                                            Click here or Drag & drop to upload the Image file
+                                            <br />
+                                            (limit 5MB)
+                                        </h3>
                             }
                         </>
                         :
@@ -142,7 +146,7 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
                     }
                 </div>
             </label>
-            <input {...getInputProps()} disabled={isDisabled} hidden required type="file" className="form-control my-3" id={`uploadImage${formName}`} name={`uploadImage${formName}`} accept=".png, .jpg, .jpeg" />
+            <input {...getInputProps()} disabled={isDisabled || uploadStatus} hidden required type="file" className="form-control my-3" id={`uploadImage${formName}`} name={`uploadImage${formName}`} accept=".png, .jpg, .jpeg" />
         </>
     )
 }

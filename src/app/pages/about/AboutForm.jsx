@@ -30,7 +30,7 @@ const AboutForm = () => {
 
     const [formData, setFormData] = useState(initialState)
 
-    const { name, job, location } = formData;
+    const { category, name, job, location } = formData;
 
     const handleSelect = (e) => {
         setFormData({ ...formData, category: e.target.value })
@@ -134,7 +134,7 @@ const AboutForm = () => {
                                 </label>
                             </div>
                             <div className="mb-5">
-                                <select onChange={handleSelect} className="form-select" aria-label="Default select example" required>
+                                <select onChange={handleSelect} value={category} className="form-select" aria-label="Default select example" required>
                                     <option value="">Team Category</option>
                                     <option value="core">Core</option>
                                     <option value="intern">Intern</option>
@@ -189,7 +189,7 @@ const AboutForm = () => {
                                             <td>{val.location}</td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
-                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
                                                     </button>

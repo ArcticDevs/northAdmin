@@ -8,8 +8,6 @@ export const postImages = async (images) => {
     console.log(images)
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
-    // const body = { images }
-    // console.log(body)
     try {
         const response = await axios.post(`${slideApiURL}/add/${adminId}`, { images })
         console.log(response)

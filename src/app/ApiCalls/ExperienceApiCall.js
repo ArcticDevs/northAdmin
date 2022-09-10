@@ -10,6 +10,7 @@ export const postExperienceTestimonial = async (Experience) => {
     try {
         const response = await axios.post(`${expApiURL}/add/${adminId}`, { Experience })
         console.log(response)
+        return response.success;
     } catch (error) {
         console.error(error)
     }

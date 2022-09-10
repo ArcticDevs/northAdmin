@@ -27,7 +27,7 @@ const WorkshopForm = () => {
 
     const [trigger, setTrigger] = useState(false)
 
-    const { title, data, dateYear, days } = formData;
+    const { course, title, data, dateYear, days } = formData;
 
     const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -51,12 +51,16 @@ const WorkshopForm = () => {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             formData.dateYear = date.toLocaleDateString('en-GB', options);
             console.log(formData)
-            // const Workshop = {
-            //     Workshop: formData
-            // }
-            postWorkshopCourse(formData);
-            setImageState(false);
-            setFormData(initialState);
+            const res = postWorkshopCourse(formData);
+            if (res) {
+                Swal.fire({
+                    title: 'Course Added Successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'Close',
+                })
+                setImageState(false);
+                setFormData(initialState);
+            }
         }
     }
 
@@ -99,11 +103,20 @@ const WorkshopForm = () => {
                         icon: 'success',
                         confirmButtonText: 'Close',
                     })
-                    setDeleteCheck({ state: false, id: "" });
-                    setDeleteId(id);
                 }
+                else {
+                    Swal.fire({
+                        title: 'Error Occured. Try Again!',
+                        icon: 'error',
+                        confirmButtonText: 'Close',
+                    })
+                }
+                setDeleteCheck({ state: false, id: "" });
+                setDeleteId(id);
             })
-            .catch((err) => console.log(err))
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     const testimonialInitialState = {
@@ -123,8 +136,15 @@ const WorkshopForm = () => {
     const handleTestimonialSubmit = (e) => {
         e.preventDefault();
         console.log(formTestimonialData)
-        postWorkshopTestimonial(formTestimonialData)
-        setFormData(testimonialInitialState)
+        const res = postWorkshopTestimonial(formTestimonialData)
+        if (res) {
+            Swal.fire({
+                title: 'Testimonial Added Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setFormData(testimonialInitialState)
+        }
     };
 
     const [testimonialData, setTestimonialData] = useState([]);
@@ -176,7 +196,7 @@ const WorkshopForm = () => {
                             <ImageUpload imageFunc={handleCourse} imageState={imageState} formName={"workshopPage"} />                        </div>
                         <div className='col-md-6'>
                             <div className="mb-5">
-                                <select onChange={handleSelect} className="form-select required" aria-label="Default select example" required>
+                                <select onChange={handleSelect} value={course} className="form-select required" aria-label="Default select example" required>
                                     <option value="">Select Course Type</option>
                                     <option value="online">Online</option>
                                     <option value="offline">Offline</option>
@@ -198,7 +218,7 @@ const WorkshopForm = () => {
                                 <label className="form-label required">Date/Year</label>
                                 <input required type="date" className="form-control" id="dateYear" name='dateYear' value={dateYear} onChange={handleFormDataChange} />
                             </div>
-                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <button type="submit" className="btn btn-primary" disabled={imageState}>{imageState ? "Uploading..." : "Submit"}</button>
                         </div>
                     </form>
                     <div className='my-10'>
@@ -253,7 +273,7 @@ const WorkshopForm = () => {
                                             <td>{val.dateYear}</td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
-                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
                                                     </button>
@@ -295,7 +315,7 @@ const WorkshopForm = () => {
                                             <td>{val.designation}</td>
                                             <td>
                                                 {deleteTestimonialCheck.state && deleteTestimonialCheck.id === val._id ?
-                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
                                                     </button>

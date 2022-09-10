@@ -18,6 +18,7 @@ const PropertyForm = () => {
 
     const [formData, setFormData] = useState(initialState)
     const [trigger, setTrigger] = useState(false)
+    const [upload, setUpload] = useState(false)
 
     const { name, content, designation } = formData;
 
@@ -26,13 +27,20 @@ const PropertyForm = () => {
     };
 
     const handleSubmit = (e) => {
+        setUpload(true)
         e.preventDefault();
         console.log(formData)
-        // const StayProperty = {
-        //     StayProperty: formData,
-        // }
-        postStayTestimonial(formData)
-        setFormData(initialState)
+        const res = postStayTestimonial(formData)
+        if(res) {
+            Swal.fire({
+                title: 'Testimonial Added Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setUpload(false)
+            setFormData(initialState)
+            
+        }
     };
 
     const [testimonialData, setTestimonialData] = useState([]);
@@ -92,7 +100,7 @@ const PropertyForm = () => {
                             <label className="form-label required">Author Designation</label>
                             <input required type="text" className="form-control" value={designation} onChange={handleFormDataChange} id="designation" name='designation' />
                         </div>
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <button type="submit" className="btn btn-primary" disabled={upload}>{upload ? "Uploading..." : "Submit"}</button>
                     </form>
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
@@ -118,7 +126,7 @@ const PropertyForm = () => {
                                             <td>{val.designation}</td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
-                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
                                                     </button>

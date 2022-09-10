@@ -10,7 +10,7 @@ export const postLibraryBook = async (Library) => {
     try {
         const response = await axios.post(`${libApiUrl}/add/${adminId}`, { Library })
         console.log(response)
-        return response.data;
+        return response.success;
     } catch (error) {
         console.error(error)
     }

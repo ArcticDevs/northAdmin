@@ -44,12 +44,16 @@ const PressForm = () => {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             formData.date = dateVal.toLocaleDateString('en-GB', options);
             console.log(formData)
-            // const teamsData = {
-            //     teamsData: formData
-            // }
-            postPressData(formData);
-            setImageState(false);
-            setFormData(initialState);
+            const res = postPressData(formData);
+            if (res) {
+                Swal.fire({
+                    title: 'Press Data Added Successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'Close',
+                })
+                setImageState(false);
+                setFormData(initialState);
+            }
         }
     }
 
@@ -72,7 +76,7 @@ const PressForm = () => {
             }
         }
         getTeamsDataFunc();
-    }, [deleteId,trigger])
+    }, [deleteId, trigger])
 
     const handlePressDelete = async (id, imageId) => {
         let dataSend = {
@@ -146,11 +150,11 @@ const PressForm = () => {
                                 <label className="form-label required">Press News Link</label>
                                 <input required type="text" className="form-control" id="newLink" name='newLink' value={newLink} onChange={handleFormDataChange} />
                             </div>
-                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <button type="submit" className="btn btn-primary" disabled={imageState}>{imageState ? "Uploading..." : "Submit"}</button>
                         </div>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data" onEnter={()=> setTrigger(!trigger)}>
+                <Tab eventKey="TableTab" title="View Data" onEnter={() => setTrigger(!trigger)}>
                     <h1>Press Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
@@ -179,7 +183,7 @@ const PressForm = () => {
                                             <td>{val.link}</td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
-                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                    <button className='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
                                                     </button>

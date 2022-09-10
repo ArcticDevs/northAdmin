@@ -8,16 +8,14 @@ import { useDropzone } from 'react-dropzone';
 const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
 
     const [pdfFiles, setPdfFiles] = useState([])
-    // const [showDropArea, setShowDropArea] = useState(true)
-    // const [showUploadBtn, setShowUploadBtn] = useState(false)
 
     const [uploadedFiles, setUploadedFiles] = useState([])
-    const [uploadLoading, setUploadLoading] = useState(true)
+    const [uploadLoading, setUploadLoading] = useState(false)
 
     const [image, setImage] = useState("");
-    // const [imageArray, setImageArray] = useState([]);
     const [createObjectURL, setCreateObjectURL] = useState("");
     const [createObjectURLArray, setCreateObjectURLArray] = useState([]);
+
     //file upload
     const onDrop = useCallback((Addedfile) => {
         const reader = new FileReader()
@@ -108,8 +106,6 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
             .then((data) => {
                 console.log(data)
 
-                setCreateObjectURLArray([...createObjectURLArray, createObjectURL]);
-                setCreateObjectURL("")
 
                 // uploadedFileObj.name = image.name
                 uploadedFileObj.url = data.url
@@ -117,6 +113,8 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
 
                 setUploadedFiles([...uploadedFiles, uploadedFileObj])
                 setUploadLoading(false)
+                setCreateObjectURLArray([...createObjectURLArray, createObjectURL]);
+                setCreateObjectURL("")
             })
             .catch((err) => {
                 console.log(err)
@@ -138,29 +136,36 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
     useEffect(() => {
         console.log(uploadedFiles)
         if (imageState) {
-            imageFunc(uploadedFiles);
+            imageFunc({ data: uploadedFiles, status: true });
+            setUploadedFiles([])
+            setCreateObjectURL("")
         }
     }, [imageState])
 
     return (
         <>
-            <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`sliderImage${sliderName}`} className="form-label w-100">
-                <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
+            <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`sliderImage${sliderName}`} className={`form-label w-100 ${uploadLoading ? "bg-light" : "bg-transparent"}`}>
+                <div className={`d-flex flex-column justify-content-center align-items-center border border-2 border-dark rounded ${uploadLoading && "bg-secondary"}`} style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
                     {createObjectURL === "" ?
                         <>
                             <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
-                            <h3 className='text-center'>
-                                Click here or Drag & drop to upload the Image file
-                                <br />
-                                (limit 5MB)
-                            </h3>
+                            {uploadLoading ?
+                                <h3 className='text-muted'>
+                                    Uploading...
+                                </h3> :
+                                <h3 className='text-center'>
+                                    Click here or Drag & drop to upload the Image file
+                                    <br />
+                                    (limit 5MB)
+                                </h3>
+                            }
                         </>
                         :
                         <img style={{ width: "100%", height: "100%", display: 'block', objectFit: 'cover' }} src={createObjectURL} alt="upload_Image" />
                     }
                 </div>
             </label>
-            <input {...getInputProps()} hidden required type="file" className="form-control my-3" id={`sliderImage${sliderName}`} name={`sliderImage${sliderName}`} accept=".png, .jpg, .jpeg" />
+            <input {...getInputProps()} disabled={uploadLoading} hidden required type="file" className="form-control my-3" id={`sliderImage${sliderName}`} name={`sliderImage${sliderName}`} accept=".png, .jpg, .jpeg" />
             <div className='d-flex flex-column justify-content-between'>
                 <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'>
                     {createObjectURLArray.map((val, index) =>
@@ -168,7 +173,7 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
                     )}
                 </div>
                 <div className='d-flex flex-column align-self-end mt-5'>
-                    <button type="button" className="btn btn-secondary" onClick={handleUpload}>Add image to Slider</button>
+                    <button type="button" className="btn btn-secondary" onClick={handleUpload} disabled={uploadLoading}>Add image to Slider</button>
                 </div>
             </div>
         </>

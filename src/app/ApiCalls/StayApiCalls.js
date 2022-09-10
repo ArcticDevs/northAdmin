@@ -10,11 +10,10 @@ export const postStayTestimonial = async (StayProperty) => {
     try {
         const response = await axios.post(`${stayApiURL}/add/${adminId}/stayProperty`, { StayProperty })
         console.log(response)
-        return response.data;
+        return response.success;
     } catch (error) {
         console.error(error)
     }
-
 }
 
 export const getStayTestimonials = async () => {

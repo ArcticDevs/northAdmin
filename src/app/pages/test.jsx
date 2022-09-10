@@ -259,7 +259,7 @@ const DashboardApp = () => {
         </div>
       )}
       {showUploadBtn && uploadLoading ? (
-        <button class='btn btn-warning' type='button' disabled>
+        <button className='btn btn-warning' type='button' disabled>
           <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
           Uploading...
         </button>

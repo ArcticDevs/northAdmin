@@ -173,7 +173,7 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
             }
           </div>
         </label>
-        <input {...getInputProps()} hidden required type="file" className="form-control my-3" id={`sliderImage${sliderName}`} name={`sliderImage${sliderName}`} accept=".png, .jpg, .jpeg" />
+        <input {...getInputProps()} disabled={uploadLoading} hidden required type="file" className="form-control my-3" id={`sliderImage${sliderName}`} name={`sliderImage${sliderName}`} accept=".png, .jpg, .jpeg" />
         <div className='col-md-6 d-flex flex-column justify-content-between'>
           <div className='d-flex flex-row flex-wrap justify-content-start'>
             {createObjectURLArray.map((val, index) =>
