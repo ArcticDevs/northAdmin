@@ -9,14 +9,11 @@ import { postImages } from '../ApiCalls/SliderApiCalls';
 const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
 
   const [pdfFiles, setPdfFiles] = useState([])
-  // const [showDropArea, setShowDropArea] = useState(true)
-  // const [showUploadBtn, setShowUploadBtn] = useState(false)
 
   const [uploadedFiles, setUploadedFiles] = useState([])
   const [uploadLoading, setUploadLoading] = useState(false)
 
   const [image, setImage] = useState("");
-  // const [imageArray, setImageArray] = useState([]);
   const [createObjectURL, setCreateObjectURL] = useState("");
   const [createObjectURLArray, setCreateObjectURLArray] = useState([]);
   //file upload
@@ -64,13 +61,7 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
         })
       } else {
         tempPdfFiles.push(tempObj)
-
         setPdfFiles(tempPdfFiles)
-
-        // if (tempPdfFiles.length === 2) {
-        //   setShowDropArea(false)
-        //   setShowUploadBtn(true)
-        // }
       }
     }
   }, [])
@@ -83,8 +74,6 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
   })
 
   const handleUpload = () => {
-    // console.log(orderDetails);
-    // console.log(pdfFiles);
     setUploadLoading(true)
     console.log(image)
 
@@ -155,11 +144,8 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
     }
     console.log(imageFiles)
     postImages(imageFiles)
-    // console.log(imageArray)
-    // setImage("")
-    // setImageArray([])
-    // setCreateObjectURL("")
-    // setCreateObjectURLArray([])
+    setCreateObjectURL("")
+    setCreateObjectURLArray([])
   }
 
   return (

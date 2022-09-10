@@ -8,7 +8,7 @@ export const postStayTestimonial = async (StayProperty) => {
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
     try {
-        const response = await axios.post(`${stayApiURL}/add/${adminId}`, { StayProperty })
+        const response = await axios.post(`${stayApiURL}/add/${adminId}/stayProperty`, { StayProperty })
         console.log(response)
         return response.data;
     } catch (error) {
@@ -19,7 +19,7 @@ export const postStayTestimonial = async (StayProperty) => {
 
 export const getStayTestimonials = async () => {
     try {
-        const response = await axios.get(`${stayApiURL}/all`);
+        const response = await axios.get(`${stayApiURL}/all/stayProperty`);
         console.log(response)
         return response.data.data;
     } catch (error) {

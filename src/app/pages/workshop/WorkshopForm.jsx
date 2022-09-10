@@ -8,7 +8,7 @@ import Tab from 'react-bootstrap-v5/lib/Tab';
 import Tabs from 'react-bootstrap-v5/lib/Tabs';
 import ImageUpload from '../ImageUpload'
 import Swal from 'sweetalert2'
-import { postWorkshopCourse, getWorkshopCourses, deleteWorkshopCourse } from '../../ApiCalls/WorkshopApiCalls'
+import { postWorkshopCourse, getWorkshopCourses, deleteWorkshopCourse, postWorkshopTestimonial, getWorkshopTestimonials, deleteWorkshopTestimonial } from '../../ApiCalls/WorkshopApiCalls'
 
 const WorkshopForm = () => {
     const intl = useIntl()
@@ -74,7 +74,7 @@ const WorkshopForm = () => {
             }
         }
         getTeamsDataFunc();
-    }, [deleteId,trigger])
+    }, [deleteId, trigger])
 
     const handleTeamDelete = async (id, imageId) => {
         let dataSend = {
@@ -121,10 +121,10 @@ const WorkshopForm = () => {
     };
 
     const handleTestimonialSubmit = (e) => {
-        // e.preventDefault();
-        // console.log(formTestimonialData)
-        // postExperienceTestimonial(formTestimonialData)
-        // setFormData(testimonialInitialState)
+        e.preventDefault();
+        console.log(formTestimonialData)
+        postWorkshopTestimonial(formTestimonialData)
+        setFormData(testimonialInitialState)
     };
 
     const [testimonialData, setTestimonialData] = useState([]);
@@ -132,32 +132,32 @@ const WorkshopForm = () => {
     const [deleteTestimonialCheck, setDeleteTestimonialCheck] = useState({ state: false, id: "" })
 
     useEffect(() => {
-        // const getData = async () => {
-        //     const data = await getExperienceTestimonials();
-        //     if (data)
-        //         setTestimonialData(data);
-        // }
-        // getData();
-    }, [deleteId, trigger])
+        const getData = async () => {
+            const data = await getWorkshopTestimonials();
+            if (data)
+                setTestimonialData(data);
+        }
+        getData();
+    }, [deleteTestimonialId, trigger])
 
     const handleDelete = async (id) => {
-        // setDeleteCheck({ state: true, id: id });
-        // const del = await deleteExperienceTestimonial(id)
-        // if (del) {
-        //     Swal.fire({
-        //         title: 'Testimonial Deleted Successfully!',
-        //         icon: 'success',
-        //         confirmButtonText: 'Close',
-        //     })
-        //     setDeleteId(id);
-        // }
-        // else {
-        //     Swal.fire({
-        //         title: 'Error Occured , please try again',
-        //         icon: 'error',
-        //         confirmButtonText: 'Close',
-        //     })
-        // }
+        setDeleteTestimonialCheck({ state: true, id: id });
+        const del = await deleteWorkshopTestimonial(id)
+        if (del) {
+            Swal.fire({
+                title: 'Testimonial Deleted Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setDeleteTestimonialId(id);
+        }
+        else {
+            Swal.fire({
+                title: 'Error Occured , please try again',
+                icon: 'error',
+                confirmButtonText: 'Close',
+            })
+        }
     }
 
     return (
@@ -208,23 +208,23 @@ const WorkshopForm = () => {
                     <div className="mb-10">
                         <h1>Workshop Testimonials</h1>
                         <form onSubmit={handleTestimonialSubmit}>
-                        <div className="mb-5">
-                            <label className="form-label required">Name</label>
-                            <input required type="text" className="form-control" name='name' id="name" value={name} onChange={handleFormTestimonialDataChange} />
-                        </div>
-                        <div className="mb-5">
-                            <label className="form-label required">Testimonial Content</label>
-                            <textarea required className="form-control" rows={7} name='content' id='content' value={content} onChange={handleFormTestimonialDataChange}></textarea>
-                        </div>
-                        <div className="mb-5">
-                            <label className="form-label required">Author Designation</label>
-                            <input required type="text" className="form-control" value={designation} onChange={handleFormTestimonialDataChange} id="designation" name='designation' />
-                        </div>
-                        <button type="submit" className="btn btn-primary">Submit</button>
-                    </form>
+                            <div className="mb-5">
+                                <label className="form-label required">Name</label>
+                                <input required type="text" className="form-control" name='name' id="name" value={name} onChange={handleFormTestimonialDataChange} />
+                            </div>
+                            <div className="mb-5">
+                                <label className="form-label required">Testimonial Content</label>
+                                <textarea required className="form-control" rows={7} name='content' id='content' value={content} onChange={handleFormTestimonialDataChange}></textarea>
+                            </div>
+                            <div className="mb-5">
+                                <label className="form-label required">Author Designation</label>
+                                <input required type="text" className="form-control" value={designation} onChange={handleFormTestimonialDataChange} id="designation" name='designation' />
+                            </div>
+                            <button type="submit" className="btn btn-primary">Submit</button>
+                        </form>
                     </div>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
+                <Tab eventKey="TableTab" title="View Data" onEnter={() => setTrigger(!trigger)}>
                     <h1>Course Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
@@ -273,7 +273,7 @@ const WorkshopForm = () => {
                     </div>
                     <h1>Slider 1</h1>
                     <SlideShow triggerVal={trigger} slideType={"workshopSlider"} />
-                    {/* <h1>Testimonials Table</h1>
+                    <h1>Testimonials Table</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
                             <thead>
@@ -294,7 +294,7 @@ const WorkshopForm = () => {
                                             <td>{val.content}</td>
                                             <td>{val.designation}</td>
                                             <td>
-                                                {deleteCheck.state && deleteCheck.id === val._id ?
+                                                {deleteTestimonialCheck.state && deleteTestimonialCheck.id === val._id ?
                                                     <button class='btn btn-danger btn-sm' type='button' disabled>
                                                         <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
                                                         Deleting...
@@ -307,7 +307,7 @@ const WorkshopForm = () => {
                                     )}
                             </tbody>
                         </table>
-                    </div> */}
+                    </div>
                 </Tab>
             </Tabs>
         </>
