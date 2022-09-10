@@ -87,8 +87,6 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
     // console.log(pdfFiles);
     setUploadLoading(true)
     console.log(image)
-    setCreateObjectURLArray([...createObjectURLArray, createObjectURL]);
-    setCreateObjectURL("")
 
     let uploadedFileObj = {
       name: '',
@@ -122,6 +120,9 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
         uploadedFileObj.url = data.url
         uploadedFileObj.id = data.id
 
+        setCreateObjectURLArray([...createObjectURLArray, createObjectURL]);
+        setCreateObjectURL("")
+
         setUploadedFiles([...uploadedFiles, uploadedFileObj])
       })
       .catch((err) => {
@@ -150,7 +151,7 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
     e.preventDefault();
     const imageFiles = {
       sliderImages: uploadedFiles.map(selectFewerProps),
-      pageSection : sliderName
+      pageSection: sliderName
     }
     console.log(imageFiles)
     postImages(imageFiles)
@@ -164,16 +165,22 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
   return (
     <>
       <form className='row my-5' onSubmit={handleSliderSubmit}>
-        <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`sliderImage${sliderName}`} className="form-label col-md-6">
-          <div className='d-flex flex-column justify-content-center align-items-center border border-3 border-dark rounded' style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
+        <label {...getRootProps({ onClick: evt => evt.preventDefault() })} htmlFor={`sliderImage${sliderName}`} className={`form-label col-md-6 ${uploadLoading ? "bg-light" : "bg-transparent"}`}>
+          <div className={`d-flex flex-column justify-content-center align-items-center border border-2 border-dark rounded ${uploadLoading && "bg-secondary"}`} style={{ height: 'calc(200px + 20vw)', cursor: 'pointer' }}>
             {createObjectURL === "" ?
               <>
                 <KTSVG path="/media/icons/duotune/general/gen005.svg" className="svg-icon-muted svg-icon-2hx" />
-                <h3 className='text-center'>
-                  Click here or Drag & drop to upload the Image file
-                  <br />
-                  (limit 5MB)
-                </h3>
+                {uploadLoading ?
+                  <h3 className='text-center'>
+                    Uploading...
+                  </h3>
+                  :
+                  <h3 className='text-center'>
+                    Click here or Drag & drop to upload the Image file
+                    <br />
+                    (limit 5MB)
+                  </h3>
+                }
               </>
               :
               <img style={{ width: "100%", height: "100%", display: 'block', objectFit: 'cover' }} src={createObjectURL} alt="upload_Image" />
@@ -188,7 +195,7 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
             )}
           </div>
           <div className='d-flex flex-column align-self-end'>
-            <button type="button" className="btn btn-secondary mb-5" onClick={handleUpload}>Add image to Slider</button>
+            <button type="button" className="btn btn-secondary mb-5" onClick={handleUpload} disabled={uploadLoading}>Add image to Slider</button>
             <button type="submit" className="btn btn-primary" style={{ display: "block" }} disabled={uploadLoading}>Submit</button>
           </div>
         </div>

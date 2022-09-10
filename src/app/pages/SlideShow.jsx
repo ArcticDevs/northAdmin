@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { deleteImages, getImages } from '../ApiCalls/SliderApiCalls'
 
-const SlideShow = ({ slideType }) => {
+const SlideShow = ({ slideType, triggerVal }) => {
     const [sliderArray, setSliderArray] = useState({ slider: [], id: "" })
     const [imageDeleted, setImageDeleted] = useState(false)
 
@@ -15,7 +15,7 @@ const SlideShow = ({ slideType }) => {
             }
         }
         getSliderImages();
-    }, [slideType,sliderArray])
+    }, [slideType,sliderArray,triggerVal,imageDeleted])
 
     const handleDB = async () => {
         const del = await deleteImages(sliderArray.id)

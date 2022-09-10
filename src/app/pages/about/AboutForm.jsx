@@ -71,7 +71,7 @@ const AboutForm = () => {
             }
         }
         getTeamsDataFunc();
-    }, [deleteId,trigger])
+    }, [deleteId, trigger])
 
     const handleTeamDelete = async (id, imageId) => {
         let dataSend = {
@@ -92,7 +92,7 @@ const AboutForm = () => {
                 const del = await deleteTeamData(id);
                 if (del) {
                     Swal.fire({
-                        title: 'Image Deleted Successfully!',
+                        title: 'Team Data Deleted Successfully!',
                         icon: 'success',
                         confirmButtonText: 'Close',
                     })
@@ -158,11 +158,11 @@ const AboutForm = () => {
                         </div>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
+                <Tab eventKey="TableTab" title="View Data" onEnter={() => setTrigger(!trigger)}>
                     <h1>Slider 1 (Above Vision Section)</h1>
-                    <SlideShow slideType={"aboveVision"} />
+                    <SlideShow triggerVal={trigger} slideType={"aboveVision"} />
                     <h1>Slider 2 (After Recognitions Table)</h1>
-                    <SlideShow slideType={"afterRecog"} />
+                    <SlideShow triggerVal={trigger} slideType={"afterRecog"} />
                     <h1>Teams Data</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
@@ -178,7 +178,7 @@ const AboutForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {teamsData && teamsData.length > 1 ?
+                                {teamsData && teamsData.length > 0 ?
                                     teamsData.map((val, index) =>
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>

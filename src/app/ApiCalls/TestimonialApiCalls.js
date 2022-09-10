@@ -10,7 +10,7 @@ export const postTestimonial = async (category, name, content, designation) => {
     try {
         const response = await axios.post(`${homeApiURL}/add/${adminId}`, { category, name, content, designation })
         console.log(response)
-        return response.data;
+        return response.success;
     } catch (error) {
         console.error(error)
     }

@@ -301,7 +301,7 @@ const ArchitectureForm = () => {
                         </table>
                     </div>
                     <h1>Slider 1 (Above Projects)</h1>
-                    <SlideShow slideType={"aboveProjects"} />
+                    <SlideShow triggerVal={trigger} slideType={"aboveProjects"} />
                     <h1>Projects</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
@@ -339,7 +339,7 @@ const ArchitectureForm = () => {
                         </table>
                     </div>
                     <h1>Client and Collaborations</h1>
-                    <SlideShow slideType={"clientCollab"} />
+                    <SlideShow triggerVal={trigger} slideType={"clientCollab"} />
                 </Tab>
             </Tabs>
         </>

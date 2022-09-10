@@ -37,13 +37,6 @@ const WorkshopForm = () => {
         setFormData({ ...formData, type: e.target.value })
     }
 
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     formData.courseImage = image;
-    //     console.log(formData)
-    //     setFormData(initialState)
-    // };
-
     const [imageState, setImageState] = useState(false);
     const [teamsData, setTeamsData] = useState([])
     const [deleteCheck, setDeleteCheck] = useState({ state: false, id: "" })
@@ -113,6 +106,60 @@ const WorkshopForm = () => {
             .catch((err) => console.log(err))
     }
 
+    const testimonialInitialState = {
+        name: "",
+        content: "",
+        designation: "",
+    }
+
+    const [formTestimonialData, setFormTestimonialData] = useState(testimonialInitialState)
+
+    const { name, content, designation } = formData;
+
+    const handleFormTestimonialDataChange = (e) => {
+        setFormTestimonialData({ ...formTestimonialData, [e.target.name]: e.target.value });
+    };
+
+    const handleTestimonialSubmit = (e) => {
+        // e.preventDefault();
+        // console.log(formTestimonialData)
+        // postExperienceTestimonial(formTestimonialData)
+        // setFormData(testimonialInitialState)
+    };
+
+    const [testimonialData, setTestimonialData] = useState([]);
+    const [deleteTestimonialId, setDeleteTestimonialId] = useState()
+    const [deleteTestimonialCheck, setDeleteTestimonialCheck] = useState({ state: false, id: "" })
+
+    useEffect(() => {
+        // const getData = async () => {
+        //     const data = await getExperienceTestimonials();
+        //     if (data)
+        //         setTestimonialData(data);
+        // }
+        // getData();
+    }, [deleteId, trigger])
+
+    const handleDelete = async (id) => {
+        // setDeleteCheck({ state: true, id: id });
+        // const del = await deleteExperienceTestimonial(id)
+        // if (del) {
+        //     Swal.fire({
+        //         title: 'Testimonial Deleted Successfully!',
+        //         icon: 'success',
+        //         confirmButtonText: 'Close',
+        //     })
+        //     setDeleteId(id);
+        // }
+        // else {
+        //     Swal.fire({
+        //         title: 'Error Occured , please try again',
+        //         icon: 'error',
+        //         confirmButtonText: 'Close',
+        //     })
+        // }
+    }
+
     return (
         <>
             <PageTitle breadcrumbs={[]}>{intl.formatMessage({ id: 'MENU.DASHBOARD' })}</PageTitle>
@@ -157,6 +204,24 @@ const WorkshopForm = () => {
                     <div className='my-10'>
                         <h1>Slider</h1>
                         <Slider sliderName={"workshopSlider"} />
+                    </div>
+                    <div className="mb-10">
+                        <h1>Workshop Testimonials</h1>
+                        <form onSubmit={handleTestimonialSubmit}>
+                        <div className="mb-5">
+                            <label className="form-label required">Name</label>
+                            <input required type="text" className="form-control" name='name' id="name" value={name} onChange={handleFormTestimonialDataChange} />
+                        </div>
+                        <div className="mb-5">
+                            <label className="form-label required">Testimonial Content</label>
+                            <textarea required className="form-control" rows={7} name='content' id='content' value={content} onChange={handleFormTestimonialDataChange}></textarea>
+                        </div>
+                        <div className="mb-5">
+                            <label className="form-label required">Author Designation</label>
+                            <input required type="text" className="form-control" value={designation} onChange={handleFormTestimonialDataChange} id="designation" name='designation' />
+                        </div>
+                        <button type="submit" className="btn btn-primary">Submit</button>
+                    </form>
                     </div>
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
@@ -207,7 +272,42 @@ const WorkshopForm = () => {
                         </table>
                     </div>
                     <h1>Slider 1</h1>
-                    <SlideShow slideType={"workshopSlider"} />
+                    <SlideShow triggerVal={trigger} slideType={"workshopSlider"} />
+                    {/* <h1>Testimonials Table</h1>
+                    <div className="table-responsive mt-5">
+                        <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
+                            <thead>
+                                <tr className='fs-3 fw-bold border-bottom-2'>
+                                    <th>S.NO</th>
+                                    <th>Name</th>
+                                    <th>Testimonial Content</th>
+                                    <th>Designation/Caption</th>
+                                    <th>Operation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {testimonialData && testimonialData.length < 1 ? <tr><td colSpan={5} className="text-center">No Data</td></tr> :
+                                    testimonialData.map((val, index) =>
+                                        <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
+                                            <td>{index + 1}</td>
+                                            <td>{val.name}</td>
+                                            <td>{val.content}</td>
+                                            <td>{val.designation}</td>
+                                            <td>
+                                                {deleteCheck.state && deleteCheck.id === val._id ?
+                                                    <button class='btn btn-danger btn-sm' type='button' disabled>
+                                                        <span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>{' '}
+                                                        Deleting...
+                                                    </button>
+                                                    :
+                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val._id)}>Delete</button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    )}
+                            </tbody>
+                        </table>
+                    </div> */}
                 </Tab>
             </Tabs>
         </>

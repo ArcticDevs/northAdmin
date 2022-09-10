@@ -103,7 +103,7 @@ const ExperienceForm = () => {
                 </Tab>
                 <Tab eventKey="TableTab" title="View Data" onEnter={() => setTrigger(!trigger)}>
                     <h1>Slider 1</h1>
-                    <SlideShow slideType={"experienceSlider"} />
+                    <SlideShow triggerVal={trigger} slideType={"experienceSlider"} />
                     <h1>Testimonials Table</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">

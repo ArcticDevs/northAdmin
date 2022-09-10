@@ -18,12 +18,13 @@ const HomeForm = () => {
     }
 
     const [trigger, setTrigger] = useState(false)
+    const [upload, setUpload] = useState(false)
 
     const [deleteId, setDeleteId] = useState()
 
     const [formData, setFormData] = useState(initialState)
 
-    const { name, content, designation } = formData;
+    const { category,name, content, designation } = formData;
 
     const handleSelect = (e) => {
         setFormData({ ...formData, category: e.target.value })
@@ -35,9 +36,20 @@ const HomeForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setUpload(true)
         console.log(formData)
-        postTestimonial(formData)
-        setFormData(initialState)
+        const res = postTestimonial(formData)
+        console.log(res)
+        if (res) {
+            Swal.fire({
+                title: 'Testimonial Added Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setUpload(false)
+            setFormData(initialState)
+            formData.category = "";
+        }
     };
 
     const [testimonialData, setTestimonialData] = useState([]);
@@ -49,7 +61,7 @@ const HomeForm = () => {
                 setTestimonialData(data);
         }
         getData();
-    }, [deleteId,trigger])
+    }, [deleteId, trigger])
 
     const handleDelete = async (id) => {
         const del = await deleteTestimonial(id)
@@ -83,7 +95,7 @@ const HomeForm = () => {
                     <h1>Testimonials</h1>
                     <form onSubmit={handleSubmit}>
                         <div className="my-5">
-                            <select onChange={handleSelect} className="form-select" aria-label="Default select example" required>
+                            <select onChange={handleSelect} value={category} className="form-select" aria-label="Default select example" required>
                                 <option value="">Select Category</option>
                                 <option value="architecture">Architecture</option>
                                 <option value="workshop">Workshop</option>
@@ -103,10 +115,10 @@ const HomeForm = () => {
                             <label className="form-label required">Author Designation</label>
                             <input required type="text" className="form-control" value={designation} onChange={handleFormDataChange} id="designation" name='designation' />
                         </div>
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <button type="submit" className="btn btn-primary" disabled={upload}>{upload ? "Uploading..." : "Submit"}</button>
                     </form>
                 </Tab>
-                <Tab eventKey="TableTab" title="View Data" onEnter={()=>setTrigger(!trigger)}>
+                <Tab eventKey="TableTab" title="View Data" onEnter={() => setTrigger(!trigger)}>
                     <h1>Testimonials Table</h1>
                     <div className="table-responsive mt-5">
                         <table className="table table-hover table-rounded table-striped border gy-7 gs-7 border-gray-500">
@@ -125,7 +137,7 @@ const HomeForm = () => {
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>
                                             <td>{val.name}</td>
-                                            <td style={{whiteSpace: 'pre-line'}}>{val.content}</td>
+                                            <td style={{ whiteSpace: 'pre-line' }}>{val.content}</td>
                                             <td>{val.designation}</td>
                                             <td>
                                                 <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(val._id)}>Delete</button>
