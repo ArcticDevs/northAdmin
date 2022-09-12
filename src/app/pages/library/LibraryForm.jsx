@@ -116,7 +116,7 @@ const LibraryForm = () => {
                 const del = await deleteLibraryBook(id);
                 if (del) {
                     Swal.fire({
-                        title: 'Image Deleted Successfully!',
+                        title: 'Data Deleted Successfully!',
                         icon: 'success',
                         confirmButtonText: 'Close',
                     })

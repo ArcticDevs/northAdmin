@@ -231,6 +231,11 @@ const ArchitectureForm = () => {
                 })
                 .catch((err) => console.log(err))
         })
+        Swal.fire({
+            title: 'Image Deleted Successfully!',
+            icon: 'success',
+            confirmButtonText: 'Close',
+        })
         setDeleteCheck({ state: false, id: "" })
         setImageDeleted(true);
     }
@@ -270,7 +275,7 @@ const ArchitectureForm = () => {
                             </div>
                             <div className="mb-5">
                                 <label className="form-label required">Link</label>
-                                <input required type="text" className="form-control" id="link" name='link' value={link} onChange={handleFormDataResearchChange} />
+                                <input required type="text" className="form-control" id="link" name='link' value={link} disabled={checkboxValue ? true : false} onChange={handleFormDataResearchChange} />
                             </div>
                             <button type="submit" className="btn btn-primary" disabled={imageState}>{imageState ? "Uploading..." : "Submit"}</button>
                         </div>
