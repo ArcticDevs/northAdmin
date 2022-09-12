@@ -8,8 +8,6 @@ const projectApiUrl = `${url}/data/project`
 export const postResearchData = async (research) => {
     const adminId = JSON.parse(localStorage.getItem("userDetails"))._id;
     console.log(adminId)
-    // const body = { images }
-    // console.log(body)
     try {
         const response = await axios.post(`${researchApiUrl}/add/${adminId}`, { research })
         console.log(response)

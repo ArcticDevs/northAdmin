@@ -43,6 +43,7 @@ export const getImages = async (sectionValue) => {
     }
     catch (error) {
         console.error(error)
+        return { error: true };
     }
 }
 

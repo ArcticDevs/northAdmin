@@ -11,17 +11,22 @@ import { postResearchData, getResearchData, deleteResearchData, postProjectData,
 import ImageUpload from '../ImageUpload'
 import Swal from 'sweetalert2'
 import SlideShow from '../SlideShow';
+import PdfUpload from '../PdfUpload'
 
 const ArchitectureForm = () => {
     const intl = useIntl()
 
     const [imageState, setImageState] = useState(false);
+    const [checkboxValue, setCheckboxValue] = useState(false);
+    const [uploadState, setUploadState] = useState({ pdf: false, image: false });
     const [trigger, setTrigger] = useState(false)
 
     const initialStateResearch = {
         sliderImages: [],
         title: "",
         content: "",
+        hasPDF: checkboxValue,
+        pdfFileURL: "",
         link: "",
     }
     const initialStateProject = {
@@ -40,17 +45,45 @@ const ArchitectureForm = () => {
         setFormDataResearch({ ...formDataResearch, [e.target.name]: e.target.value });
     };
 
+    const uploadResearch = () => {
+        console.log(formDataResearch)
+        const res = postResearchData(formDataResearch)
+        if (res) {
+            Swal.fire({
+                title: 'Book Data Added Successfully!',
+                icon: 'success',
+                confirmButtonText: 'Close',
+            })
+            setFormDataResearch(initialStateResearch);
+            setImageState(false);
+            setUploadState({ pdf: false, image: false });
+        }
+    }
+
+    useEffect(() => {
+        if (uploadState.pdf && uploadState.image) {
+            uploadResearch();
+        }
+    }, [uploadState.pdf, uploadState.image])
+
+    const handleBookPDF = (pdf) => {
+        console.log(pdf)
+        if (pdf.status) {
+            formDataResearch.pdfFileURL = pdf.data.url;
+            setUploadState({ ...uploadState, pdf: true })
+        }
+    }
+
     const handleSubmitResearch = (e) => {
         e.preventDefault();
         setImageState(true)
+        formDataResearch.hasPDF = checkboxValue;
     };
-    
+
     const handleImageFunc = (images) => {
         if (images.status) {
             formDataResearch.sliderImages = images;
-            postResearchData(formDataResearch)
-            setImageState(false)
-            setFormDataResearch(initialStateResearch)
+            setUploadState({ ...uploadState, image: true })
         }
     }
 
@@ -225,6 +258,15 @@ const ArchitectureForm = () => {
                             <div className="mb-5">
                                 <label className="form-label required">Content</label>
                                 <textarea required className="form-control" rows={7} name='content' value={content} onChange={handleFormDataResearchChange}></textarea>
+                            </div>
+                            <div className="my-8">
+                                <input className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} />
+                                <label className="form-check-label mx-3 required">
+                                    Has PDF FIle
+                                </label>
+                            </div>
+                            <div className="mb-5">
+                                <PdfUpload pdfFunc={handleBookPDF} pageState={imageState} disabled={!checkboxValue} formName={"ResearchPDF"} />
                             </div>
                             <div className="mb-5">
                                 <label className="form-label required">Link</label>

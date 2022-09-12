@@ -68,7 +68,7 @@ const SlideShow = ({ slideType, triggerVal }) => {
     return (
         <>
             <div className='d-flex flex-row flex-wrap gap-4 justify-content-start'>
-                {sliderArray && sliderArray.slider.length < 1 ? <h3>No Data</h3> :
+                {sliderArray.slider && sliderArray.slider.length < 1 ? <h3>No Data</h3> :
                     sliderArray.slider.map((val) =>
                         <img style={{ width: "80px", height: "50px", display: 'block' }} key={val.id} src={`https://drive.google.com/uc?export=view&id=${val.url.substring(32, 65)}`} alt="upload_Image" />
                     )
