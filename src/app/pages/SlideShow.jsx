@@ -3,6 +3,7 @@ import Swal from 'sweetalert2'
 import { deleteImages, getImages } from '../ApiCalls/SliderApiCalls'
 
 const SlideShow = ({ slideType, triggerVal }) => {
+    
     const [sliderArray, setSliderArray] = useState({ slider: [], id: "" })
     const [imageDeleted, setImageDeleted] = useState(false)
 
@@ -27,6 +28,7 @@ const SlideShow = ({ slideType, triggerVal }) => {
                 confirmButtonText: 'Close',
             })
             setSliderArray({ slider: [], id: "" })
+            setImageDeleted(false);
         }
         else {
             Swal.fire({
@@ -34,6 +36,7 @@ const SlideShow = ({ slideType, triggerVal }) => {
                 icon: 'error',
                 confirmButtonText: 'Close',
             })
+            setImageDeleted(false);
         }
     }
 

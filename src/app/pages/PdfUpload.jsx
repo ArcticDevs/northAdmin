@@ -24,23 +24,16 @@ const PdfUpload = ({ formName, pdfFunc, pageState, disabled }) => {
         console.log(Addedfile[0])
 
         //5MB limit
-        if (Addedfile[0].size > 5242880) {
-            Swal.fire({
-                title: 'File is too big!',
-                icon: 'info',
-                confirmButtonText: 'Close',
-            })
-        } else {
-            reader.readAsDataURL(Addedfile[0])
+        reader.readAsDataURL(Addedfile[0])
 
-            reader.onloadend = (e) => {
-                tempObj.file = e.target.result.split(',')[1]
-            }
-
-            tempObj.name = Addedfile[0].name
-
-            setPdf(tempObj);
+        reader.onloadend = (e) => {
+            tempObj.file = e.target.result.split(',')[1]
         }
+
+        tempObj.name = Addedfile[0].name
+
+        setPdf(tempObj);
+
     }, [])
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -51,6 +44,14 @@ const PdfUpload = ({ formName, pdfFunc, pageState, disabled }) => {
     })
 
     const handleUpload = () => {
+        if (pdf === "") {
+            Swal.fire({
+                title: 'Please Add Pdf',
+                icon: 'error',
+                confirmButtonText: 'Close',
+            })
+            return;
+        }
         setUploadLoading(true)
 
         let uploadedFileObj = {
@@ -82,6 +83,7 @@ const PdfUpload = ({ formName, pdfFunc, pageState, disabled }) => {
 
                 setUploadedFile(uploadedFileObj)
                 setUploadLoading(false)
+                setPdf("")
             })
             .catch((err) => {
                 console.log(err)
@@ -92,7 +94,7 @@ const PdfUpload = ({ formName, pdfFunc, pageState, disabled }) => {
                     confirmButtonText: 'Close',
                 })
 
-                setUploadLoading(false)
+                // setUploadLoading(false)
                 // setPdfFiles([])
                 setUploadedFile({})
             })

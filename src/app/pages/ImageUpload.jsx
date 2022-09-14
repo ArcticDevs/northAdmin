@@ -54,6 +54,15 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
     })
 
     const handleUpload = () => {
+        if(image==="")
+        {
+            Swal.fire({
+                title: 'Please Add Image',
+                icon: 'error',
+                confirmButtonText: 'Close',
+            })
+            return;
+        }
         setUploadLoading(true)
         setUploadStatus(true)
         let uploadedFileObj = {
@@ -88,6 +97,7 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
                 setUploadedFile(uploadedFileObj)
                 setUploadLoading(false)
                 setUploadStatus(false)
+                setImage("")
             })
             .catch((err) => {
                 console.log(err)
@@ -99,7 +109,7 @@ const ImageUpload = ({ formName, imageFunc, imageState, isDisabled }) => {
                 })
 
                 setUploadStatus(false)
-                setUploadLoading(false)
+                // setUploadLoading(false)
                 // setPdfFiles([])
                 setUploadedFile({})
             })

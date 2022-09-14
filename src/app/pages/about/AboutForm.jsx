@@ -67,7 +67,7 @@ const AboutForm = () => {
             const data = await getTeamsData();
             console.log(data)
             if (!data.error) {
-                setTeamsData(data);
+                setTeamsData(data.data);
             }
         }
         getTeamsDataFunc();

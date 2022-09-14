@@ -34,7 +34,7 @@ const WorkshopForm = () => {
     };
 
     const handleSelect = (e) => {
-        setFormData({ ...formData, type: e.target.value })
+        setFormData({ ...formData, course: e.target.value })
     }
 
     const [imageState, setImageState] = useState(false);
@@ -74,7 +74,7 @@ const WorkshopForm = () => {
             const data = await getWorkshopCourses();
             console.log(data)
             if (!data.error) {
-                setTeamsData(data);
+                setTeamsData(data.data);
             }
         }
         getTeamsDataFunc();
@@ -154,7 +154,7 @@ const WorkshopForm = () => {
     useEffect(() => {
         const getData = async () => {
             const data = await getWorkshopTestimonials();
-            if (data)
+            if (!data.error)
                 setTestimonialData(data);
         }
         getData();
@@ -261,7 +261,7 @@ const WorkshopForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {teamsData && teamsData.length > 1 ?
+                                {teamsData && teamsData.length > 0 ?
                                     teamsData.map((val, index) =>
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>

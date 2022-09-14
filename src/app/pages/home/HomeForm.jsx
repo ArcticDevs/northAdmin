@@ -58,8 +58,8 @@ const HomeForm = () => {
     useEffect(() => {
         const getData = async () => {
             const data = await getHomeTestimonials();
-            if (data)
-                setTestimonialData(data);
+            if (!data.error)
+                setTestimonialData(data.data);
         }
         getData();
     }, [deleteId, trigger])

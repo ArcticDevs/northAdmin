@@ -17,6 +17,7 @@ const ArchitectureForm = () => {
     const intl = useIntl()
 
     const [imageState, setImageState] = useState(false);
+    const [pdfState, setPdfState] = useState(false);
     const [checkboxValue, setCheckboxValue] = useState(false);
     const [uploadState, setUploadState] = useState({ pdf: false, image: false });
     const [trigger, setTrigger] = useState(false)
@@ -56,6 +57,7 @@ const ArchitectureForm = () => {
             })
             setFormDataResearch(initialStateResearch);
             setImageState(false);
+            setPdfState(false)
             setUploadState({ pdf: false, image: false });
         }
     }
@@ -64,11 +66,15 @@ const ArchitectureForm = () => {
         if (uploadState.pdf && uploadState.image) {
             uploadResearch();
         }
-    }, [uploadState.pdf, uploadState.image])
+        else if(uploadState.image && !pdfState)
+        {
+            uploadResearch();
+        }
+    }, [uploadState.pdf, uploadState.image,pdfState])
 
     const handleBookPDF = (pdf) => {
         console.log(pdf)
-        if (pdf.status) {
+        if (pdf.status && checkboxValue) {
             formDataResearch.pdfFileURL = pdf.data.url;
             setUploadState({ ...uploadState, pdf: true })
         }
@@ -77,6 +83,10 @@ const ArchitectureForm = () => {
     const handleSubmitResearch = (e) => {
         e.preventDefault();
         setImageState(true)
+        if(checkboxValue)
+        {
+            setPdfState(true)
+        }
         formDataResearch.hasPDF = checkboxValue;
     };
 
@@ -108,7 +118,7 @@ const ArchitectureForm = () => {
                 content: projectContent
             }
             postProjectData(project)
-            setImageState(false)
+            setProjectImgState(false)
             setFormDataProject(initialStateProject)
         }
     }
@@ -122,7 +132,7 @@ const ArchitectureForm = () => {
             const data = await getResearchData();
             console.log(data)
             if (!data.error) {
-                setResearchData(data);
+                setResearchData(data.data);
             }
         }
         getResearchDataFunc();
@@ -137,7 +147,7 @@ const ArchitectureForm = () => {
             const data = await getProjectData();
             console.log(data)
             if (!data.error) {
-                setProjectData(data);
+                setProjectData(data.data);
             }
         }
         getProjectDataFunc();
@@ -192,6 +202,7 @@ const ArchitectureForm = () => {
                 confirmButtonText: 'Close',
             })
             setDeleteId("")
+            setImageDeleted(false)
         }
         else {
             Swal.fire({
@@ -199,6 +210,7 @@ const ArchitectureForm = () => {
                 icon: 'error',
                 confirmButtonText: 'Close',
             })
+            setImageDeleted(false)
         }
     }
 
@@ -208,11 +220,13 @@ const ArchitectureForm = () => {
     }, [imageDeleted])
 
     const handleResearchDelete = (sliderArray, id) => {
+        console.log(sliderArray)
         setDeleteId(id)
+        setImageDeleted(false)
 
         setDeleteCheck({ state: true, id: id })
 
-        sliderArray.slider.map((val) => {
+        sliderArray.map((val) => {
 
             let dataSend = {
                 fileId: val.id,
@@ -271,7 +285,7 @@ const ArchitectureForm = () => {
                                 </label>
                             </div>
                             <div className="mb-5">
-                                <PdfUpload pdfFunc={handleBookPDF} pageState={imageState} disabled={!checkboxValue} formName={"ResearchPDF"} />
+                                <PdfUpload pdfFunc={handleBookPDF} pageState={pdfState} disabled={!checkboxValue} formName={"ResearchPDF"} />
                             </div>
                             <div className="mb-5">
                                 <label className="form-label required">Link</label>
@@ -299,7 +313,7 @@ const ArchitectureForm = () => {
                                     <label className="form-label required">Content</label>
                                     <textarea required className="form-control" rows={7} name='projectContent' value={projectContent} onChange={handleFormDataProjectChange}></textarea>
                                 </div>
-                                <button type="submit" className="btn btn-primary" disabled={imageState}>{imageState ? "Uploading..." : "Submit"}</button>
+                                <button type="submit" className="btn btn-primary" disabled={projectImgState}>{projectImgState ? "Uploading..." : "Submit"}</button>
                             </div>
                         </form>
                     </div>
@@ -336,7 +350,7 @@ const ArchitectureForm = () => {
                                             </td>
                                             <td>{val.title}</td>
                                             <td>{val.content}</td>
-                                            <td>{val.link}</td>
+                                            <td><a href={val.hasPDF ? val.pdfFileURL : val.link} target="_blank" rel="noopener noreferrer">link</a></td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
                                                     <button className='btn btn-danger btn-sm' type='button' disabled>
@@ -344,7 +358,7 @@ const ArchitectureForm = () => {
                                                         Deleting...
                                                     </button>
                                                     :
-                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleResearchDelete(val.sliderImages, val._id)}>Delete</button>
+                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleResearchDelete(val.sliderImages[val.sliderImages.length-1].data, val._id)}>Delete</button>
                                                 }
                                             </td>
                                         </tr>

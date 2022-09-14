@@ -11,6 +11,7 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
 
     const [uploadedFiles, setUploadedFiles] = useState([])
     const [uploadLoading, setUploadLoading] = useState(false)
+    // const [uploadStatus, setUploadStatus] = useState(false)
 
     const [image, setImage] = useState("");
     const [createObjectURL, setCreateObjectURL] = useState("");
@@ -76,6 +77,17 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
     const handleUpload = () => {
         // console.log(orderDetails);
         // console.log(pdfFiles);
+
+        if(image==="")
+        {
+            Swal.fire({
+                title: 'Please Add Image',
+                icon: 'error',
+                confirmButtonText: 'Close',
+            })
+            return;
+        }
+
         setUploadLoading(true)
         console.log(image)
 
@@ -115,6 +127,7 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
                 setUploadLoading(false)
                 setCreateObjectURLArray([...createObjectURLArray, createObjectURL]);
                 setCreateObjectURL("")
+                setImage("");
             })
             .catch((err) => {
                 console.log(err)
@@ -138,6 +151,7 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
         if (imageState) {
             imageFunc({ data: uploadedFiles, status: true });
             setUploadedFiles([])
+            setCreateObjectURLArray([]);
             setCreateObjectURL("")
         }
     }, [imageState])
@@ -173,7 +187,7 @@ const MultiImageUpload = ({ imageFunc, sliderName, imageState = false }) => {
                     )}
                 </div>
                 <div className='d-flex flex-column align-self-end mt-5'>
-                    <button type="button" className="btn btn-secondary" onClick={handleUpload} disabled={uploadLoading}>Add image to Slider</button>
+                    <button type="button" className="btn btn-secondary" onClick={handleUpload} disabled={uploadLoading}>{uploadLoading ? "Uploading Image..." : "Add image to Slider"}</button>
                 </div>
             </div>
         </>

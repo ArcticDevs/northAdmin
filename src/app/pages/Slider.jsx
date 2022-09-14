@@ -74,6 +74,14 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
   })
 
   const handleUpload = () => {
+    if (image === "") {
+      Swal.fire({
+        title: 'Please Add Image',
+        icon: 'error',
+        confirmButtonText: 'Close',
+      })
+      return;
+    }
     setUploadLoading(true)
     console.log(image)
 
@@ -113,6 +121,7 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
         setCreateObjectURL("")
 
         setUploadedFiles([...uploadedFiles, uploadedFileObj])
+        setImage("")
       })
       .catch((err) => {
         console.log(err)
@@ -143,9 +152,23 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
       pageSection: sliderName
     }
     console.log(imageFiles)
-    postImages(imageFiles)
-    setCreateObjectURL("")
-    setCreateObjectURLArray([])
+    const res = postImages(imageFiles);
+    if (res) {
+      Swal.fire({
+        title: 'Slider Added Successfully',
+        icon: 'success',
+        confirmButtonText: 'Close',
+      })
+      setCreateObjectURL("")
+      setCreateObjectURLArray([])
+    }
+    else {
+      Swal.fire({
+        title: 'Error Occured , please try again',
+        icon: 'error',
+        confirmButtonText: 'Close',
+      })
+    }
   }
 
   return (
@@ -181,7 +204,7 @@ const Slider = ({ imageFunc, withForm, sliderName, pageValue }) => {
             )}
           </div>
           <div className='d-flex flex-column align-self-end'>
-            <button type="button" className="btn btn-secondary mb-5" onClick={handleUpload} disabled={uploadLoading}>Add image to Slider</button>
+            <button type="button" className="btn btn-secondary mb-5" onClick={handleUpload} disabled={uploadLoading}>{uploadLoading ? "Uploading Image..." : "Add image to Slider"}</button>
             <button type="submit" className="btn btn-primary" style={{ display: "block" }} disabled={uploadLoading}>Submit</button>
           </div>
         </div>

@@ -21,9 +21,11 @@ export const getHomeTestimonials = async () => {
     try {
         const response = await axios.get(`${homeApiURL}/all`);
         console.log(response)
-        return response.data.data;
+        return { data: response.data.data, error: false };
+        // return response.data.data;
     } catch (error) {
         console.error(error)
+        return { error: true };
     }
 }
 

@@ -53,14 +53,35 @@ const PressForm = () => {
                 })
                 setImageState(false);
                 setFormData(initialState);
+                setCheckboxValue(false)
             }
         }
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setImageState(true)
-        formData.videoLink = checkboxValue;
+        if(checkboxValue)
+        {
+            setImageState(true)
+            formData.videoLink = checkboxValue;
+        }
+        else {
+            formData.videoLink = checkboxValue;
+            const dateVal = new Date(date);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            formData.date = dateVal.toLocaleDateString('en-GB', options);
+            console.log(formData)
+            const res = postPressData(formData);
+            if (res) {
+                Swal.fire({
+                    title: 'Press Data Added Successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'Close',
+                })
+                setFormData(initialState)
+                setCheckboxValue(false)
+            }
+        }
     };
 
     const [pressData, setPressData] = useState([])
@@ -72,7 +93,7 @@ const PressForm = () => {
             const data = await getPressData();
             console.log(data)
             if (!data.error) {
-                setPressData(data);
+                setPressData(data.data);
             }
         }
         getTeamsDataFunc();
@@ -125,7 +146,7 @@ const PressForm = () => {
                         </div>
                         <div className="col-md-6 m-xs-10">
                             <div className="mb-5">
-                                <input className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} required />
+                                <input className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} />
                                 <label className="form-check-label mx-3 required">
                                     Has Video Link
                                 </label>
@@ -171,7 +192,7 @@ const PressForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {pressData && pressData.length > 1 ?
+                                {pressData && pressData.length > 0 ?
                                     pressData.map((val, index) =>
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>
@@ -180,7 +201,7 @@ const PressForm = () => {
                                             <td>{val.content}</td>
                                             <td>{val.date}</td>
                                             <td>{val.name}</td>
-                                            <td>{val.link}</td>
+                                            <td><a href={val.link} target="_blank" rel="noopener noreferrer">link</a></td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
                                                     <button className='btn btn-danger btn-sm' type='button' disabled>

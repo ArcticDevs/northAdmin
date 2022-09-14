@@ -28,13 +28,14 @@ const LibraryForm = () => {
 
     const [formData, setFormData] = useState(initialState)
 
-    const { title, author, year, link } = formData;
+    const { title, author, dateYear, link } = formData;
 
     const handleFormDataChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const [imageState, setImageState] = useState(false);
+    const [pdfState, setPdfState] = useState(false);
     const [uploadState, setUploadState] = useState({ pdf: false, image: false });
 
     const uploadPdf = () => {
@@ -48,6 +49,7 @@ const LibraryForm = () => {
             })
             setFormData(initialState);
             setImageState(false);
+            setPdfState(false);
             setUploadState({ pdf: false, image: false });
         }
     }
@@ -56,11 +58,15 @@ const LibraryForm = () => {
         if (uploadState.pdf && uploadState.image) {
             uploadPdf();
         }
+        else if(uploadState.image && !pdfState)
+        {
+            uploadPdf();
+        }
     }, [uploadState.pdf, uploadState.image])
 
     const handleBookPDF = (pdf) => {
         console.log(pdf)
-        if (pdf.status) {
+        if (pdf.status && checkboxValue) {
             formData.pdfFileURL = pdf.data.url;
             setUploadState({ ...uploadState, pdf: true })
         }
@@ -79,6 +85,10 @@ const LibraryForm = () => {
         e.preventDefault();
         console.log(formData)
         setImageState(true);
+        if(checkboxValue)
+        {
+            setPdfState(true)
+        }
         formData.hasPDF = checkboxValue;
     };
 
@@ -91,7 +101,7 @@ const LibraryForm = () => {
             const data = await getLibraryBooks();
             console.log(data)
             if (!data.error) {
-                setBookData(data);
+                setBookData(data.data);
             }
         }
         getLibraryFunc();
@@ -153,7 +163,7 @@ const LibraryForm = () => {
                             </div>
                             <div className="mb-5">
                                 <label className="form-label">Date/Year</label>
-                                <input type="text" className="form-control" id="year" name='year' value={year} onChange={handleFormDataChange} />
+                                <input type="text" className="form-control" id="dateYear" name='dateYear' value={dateYear} onChange={handleFormDataChange} />
                             </div>
                             <div className="my-8">
                                 <input className="form-check-input" type="checkbox" checked={checkboxValue} onChange={() => setCheckboxValue(!checkboxValue)} />
@@ -162,7 +172,7 @@ const LibraryForm = () => {
                                 </label>
                             </div>
                             <div className="mb-5">
-                                <PdfUpload pdfFunc={handleBookPDF} pageState={imageState} disabled={!checkboxValue} formName={"libraryPage"} />
+                                <PdfUpload pdfFunc={handleBookPDF} pageState={pdfState} disabled={!checkboxValue} formName={"libraryPage"} />
                             </div>
                             <div className="mb-5">
                                 <label className="form-label">Link</label>
@@ -188,16 +198,15 @@ const LibraryForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {bookData && bookData.length > 1 ?
+                                {bookData && bookData.length > 0 ?
                                     bookData.map((val, index) =>
                                         <tr className='fs-5 border-bottom border-gray-500' key={val._id}>
                                             <td>{index + 1}</td>
                                             <td><img style={{ width: "80px", height: "50px", display: 'block' }} src={val.imgURL ? `https://drive.google.com/uc?export=view&id=${val.imgURL.substring(32, 65)}` : ""} alt="Team_Image" /></td>
-                                            <td>{val.name}</td>
                                             <td>{val.title}</td>
                                             <td>{val.author}</td>
                                             <td>{val.dateYear}</td>
-                                            <td>{val.link === "" ? val.pdfFileURL : val.link}</td>
+                                            <td><a href={val.hasPDF ? val.pdfFileURL : val.link} target="_blank" rel="noopener noreferrer">link</a></td>
                                             <td>
                                                 {deleteCheck.state && deleteCheck.id === val._id ?
                                                     <button className='btn btn-danger btn-sm' type='button' disabled>
